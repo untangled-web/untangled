@@ -6,10 +6,10 @@ pick and choose the pieces you wish to use.
 
 NOTE: THIS IS ALPHA SOFTWARE, BASED UPON ALPHA VERSIONS OF Om. THIS IS NOT READY FOR PRODUCTION.
 
-We're developing this framework as part of our core software stack for production applications. We will not consider
-this framework stable until Om becomes stable.
+We're developing this framework as part of our core software stack at NAVIS for production applications. 
+We will not consider this framework stable until Om becomes stable.
 
-The full stack framework includes (See [untangled-web](https://github.com/untangled-web) on Github:
+The full stack framework includes (See [untangled-web](https://github.com/untangled-web) on Github):
 
 - Untangled Client: A library that builds upon Om 1.0, but greatly simplifies overall application development. 
 This results in the following core features:

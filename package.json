@@ -1,0 +1,16 @@
+{
+  "name": "app-spec",
+  "version": "1.0.0",
+  "description": "Testing",
+  "main": "index.js",
+  "directories": { },
+  "dependencies": {},
+  "devDependencies": {
+    "karma": "^0.13.19",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-firefox-launcher": "^0.1.7",
+    "karma-cljs-test": "^0.1.0"
+  },
+  "author": "",
+  "license": "NAVIS"
+}
