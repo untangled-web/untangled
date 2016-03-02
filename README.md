@@ -4,10 +4,15 @@ The Untangled web framework is a ClojureScript web framework that blends various
 with a good bit of glue code to make single-page webapps a breeze. It is a full-stack environment, but you can
 pick and choose the pieces you wish to use.
 
-The full stack framework includes:
+NOTE: THIS IS ALPHA SOFTWARE, BASED UPON ALPHA VERSIONS OF Om. THIS IS NOT READY FOR PRODUCTION.
 
-- Untangled Client: A library that builds upon Om 1.0, but greatly simplifies overall application development. This 
-results in the following core features:
+We're developing this framework as part of our core software stack for production applications. We will not consider
+this framework stable until Om becomes stable.
+
+The full stack framework includes (See [https://github.com/untangled-web](untangled-web) on Github:
+
+- Untangled Client: A library that builds upon Om 1.0, but greatly simplifies overall application development. 
+This results in the following core features:
     - Co-located UI queries
     - The elimination of controller logic
     - The elimination of event systems
