@@ -1,4 +1,4 @@
-(defproject untangled/app "0.0.1"
+(defproject untangled/app "0.0.2-SNAPSHOT"
   :description "A sample app"
   :url ""
   :license {:name "MIT"

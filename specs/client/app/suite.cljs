@@ -1,8 +1,6 @@
 (ns app.suite
-  (:require-macros
-    [untangled-spec.reporters.suite :as ts])
   (:require
-    untangled-spec.reporters.impl.suite
+    [untangled-spec.reporters.suite :as ts :include-macros true]
     app.tests-to-run
     [devtools.core :as devtools]))
 
