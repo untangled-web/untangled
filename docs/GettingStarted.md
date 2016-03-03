@@ -59,6 +59,60 @@ in the dev build.
 The critical files for this are organized as follows:
 
 ```
+resources
+├── config
+│   └── defaults.edn    ; Web server configuration defaults
+└── public
+    ├── cards.html      ; Devcards HTML file
+    ├── css
+    │   ├── app.css     ; Application CSS
+    │   ├── edn.css     ; Spec rendering CSS 
+    │   └── test.css
+    ├── index.html      ; Main Application HTML
+    └── test.html       ; Spec Running HTML
+src
+├── cards
+│   └── app_cards
+│       ├── cards_ui.cljs       ; Devcards entry point (must require all other card ns)
+│       └── sample_card.cljs    ; Sample Devcard
+├── client
+│   └── app
+│       ├── core.cljs            ; Client creation/initial loading code
+│       ├── i18n                 ; generated i18n code
+│       ├── main.cljs            ; Production entry point
+│       ├── mutations.cljs       ; All client mutations to the app state
+│       ├── support_viewer.cljs  ; A VCR Support viewer
+│       └── ui.cljs              ; The UI
+├── server
+│   └── app
+│       ├── api.clj              ; The queries and mutations on the server
+│       ├── main.clj             ; Production web server entry point
+│       └── system.clj           ; Generation of the web server itself
+└── shared                       ; Location for cljc files
+dev
+├── client
+│   └── cljs
+│       └── user.cljs            ; Development mode client entry point
+└── server
+    └── user.clj                 ; Development mode entry for server 
+script
+└── figwheel.clj                 ; Script to start various figwheel builds via -Dbuild-id
+specs
+├── client
+│   └── app
+│       ├── all_tests.cljs       ; CI (command line) test runner entry point for browser tests
+│       ├── sample_spec.cljs     ; A specification (client)
+│       ├── suite.cljs           ; The live spec renderer (browser) for dev mode
+│       └── tests_to_run.cljs    ; The common list of specs in a require (needed to make CI and live both work)
+├── server
+│   └── app
+│       └── server_spec.clj      ; A sample server spec (run via `lein test-refresh`)
+└── shared                       ; Location for shared spec cljc files
+i18n
+└── msgs                         ; Generated i18n template, and user-generated translations
+    ├── es_MX.mo
+    ├── es_MX.po
+    └── messages.pot
 ```
 
 

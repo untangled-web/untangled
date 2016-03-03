@@ -9,6 +9,8 @@
     [taoensso.timbre :as timbre])
   (:gen-class))
 
+; Production entry point.
+
 ; thin wrappers around System for mocking purposes
 (def console (System/console))
 (defn exit [exit-code]

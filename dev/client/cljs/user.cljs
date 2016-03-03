@@ -11,11 +11,14 @@
 
 (enable-console-print!)
 
+; Use Chrome...these enable proper formatting of cljs data structures!
 (devtools/enable-feature! :sanity-hints)
 (devtools/install!)
 
+; Mount the app and remember it.
 (reset! app (core/mount @app ui/Root "app"))
 
+; use this from REPL to view bits of the application db
 (defn log-app-state
   "Helper for logging the app-state, pass in top-level keywords from the app-state and it will print only those
   keys and their values."
@@ -25,4 +28,5 @@
               app-state
               (select-keys app-state keywords)))))
 
+; Om/dev logging level
 (log/set-level :none)
