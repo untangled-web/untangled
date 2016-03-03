@@ -12,14 +12,16 @@
                  [lein-doo "0.1.6" :scope "test"]
                  [org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.228"]
-                 [org.omcljs/om "1.0.0-alpha30"]
-                 [navis/untangled-client "0.4.4-SNAPSHOT"]
+                 [org.omcljs/om "1.0.0-alpha30" :exclusions [cljsjs/react]]
+                 [navis/untangled-client "0.4.4-SNAPSHOT" :exclusions [cljsjs/react org.omcljs/om]]
                  [navis/untangled-server "0.4.4-SNAPSHOT"]
                  [navis/untangled-datomic "0.4.4-SNAPSHOT" :exclusions [com.datomic/datomic-free]]
-                 [untangled-spec "0.3.4-SNAPSHOT" :scope "test"]]
+                 [cljsjs/react "0.14.3-0"]
+                 [untangled-spec "0.3.4-SNAPSHOT" :scope "test" :exclusions [cljsjs/react-with-addons]]]
 
   :plugins [[lein-cljsbuild "1.1.2"]
             [lein-doo "0.1.6"]
+            [untangled-lein-i18n "0.1.2"]
             [lein-environ "1.0.0"]
             [com.jakemccrary/lein-test-refresh "0.14.0"]]
 
@@ -86,20 +88,26 @@
                 :source-paths ["src/client" "src/shared"]
                 :compiler     {:main          app.main
                                :asset-path    "js/compiled/prod"
-                               :output-to     "resources/public/js/compiled/app.js"
                                :output-dir    "resources/public/js/compiled/prod"
                                :optimizations :advanced
+                               :modules       {:en-US {:output-to "resources/public/js/en-US.js", :entries #{"app.i18n.en-US"}},
+                                               :es-MX {:output-to "resources/public/js/es-MX.js", :entries #{"app.i18n.es-MX"}},
+                                               :main  {:output-to "resources/public/js/app.js", :entries #{"app.main"}}}
                                }}
 
                {:id           "i18n"
                 :source-paths ["src/client" "src/shared"]
                 :compiler     {:main          app.main
-                               :asset-path    "js/compiled/out"
                                :output-to     "i18n/app.js"
                                :output-dir    "i18n/out"
                                :optimizations :whitespace}}]}
 
   :figwheel {:css-dirs ["resources/public/css"]}
+
+  :untangled-i18n {:default-locale        "en-US"
+                   :translation-namespace "app.i18n"
+                   :source-folder         "src/client"
+                   :target-build          "i18n"}
 
   :profiles {:uberjar {:prep-tasks  ["compile"
                                      ["cljsbuild" "once" "production"]]

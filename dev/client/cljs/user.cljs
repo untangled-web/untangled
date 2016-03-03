@@ -2,6 +2,8 @@
   (:require
     [app.core :refer [app]]
     [untangled.client.core :as core]
+    app.i18n.default-locale
+    app.i18n.locales
     [cljs.pprint :refer [pprint]]
     [devtools.core :as devtools]
     [untangled.client.logging :as log]

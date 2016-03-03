@@ -13,5 +13,5 @@
 
                      :started-callback
                      (fn [{:keys [reconciler]}]
-                       (df/load-singleton reconciler (om/get-query ui/Root) :without #{:react-key :comments})))))
+                       (df/load-singleton reconciler (om/get-query ui/Root) :without #{:react-key :comments :app/locale})))))
 
