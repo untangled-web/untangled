@@ -22,5 +22,5 @@
                      :started-callback
                      (fn [{:keys [reconciler]}]
                        ; Load a query from the server into app state, eliding any of the :without keywords (recursively)
-                       (df/load-singleton reconciler (om/get-query ui/Root) :without #{:react-key :current-tab :comments :app/locale})))))
+                       (df/load-singleton reconciler (om/get-query ui/Root) :without #{:current-tab :comments})))))
 
