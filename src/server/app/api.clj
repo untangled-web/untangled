@@ -11,7 +11,7 @@
 
 ;; your query entry point (feel free to make multimethod). Standard Om fare here.
 (defn api-read [{:keys [query]} k params]
-  (Thread/sleep 1000)
+  (Thread/sleep 1000) ; playground delay...make it seem like there is some server work involved
   (case k
     :some-data {:value {:text "Hello from the server!"}}
     :data-item {:value {:comments [{:id 1 :text "Hi there!" :author "Sam"}

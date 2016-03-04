@@ -11,7 +11,7 @@
                  [org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.228"]
                  [org.omcljs/om "1.0.0-alpha30" :exclusions [cljsjs/react]]
-                 [navis/untangled-client "0.4.4" :exclusions [cljsjs/react org.omcljs/om]]
+                 [navis/untangled-client "0.4.5-SNAPSHOT" :exclusions [cljsjs/react org.omcljs/om]]
                  [navis/untangled-server "0.4.5"]
                  [navis/untangled-datomic "0.4.4" :exclusions [com.datomic/datomic-free org.clojure/tools.cli]]
                  [navis/untangled-spec "0.3.5" :scope "test" :exclusions [cljsjs/react-with-addons]]]
@@ -37,7 +37,7 @@
   :cljsbuild {:builds
               [
                {:id           "dev"
-                :source-paths ["src/client" "src/shared" "dev/client"]
+                :source-paths ["src/client" "src/shared" "dev/client" "checkouts/untangled-client/src"]
                 :figwheel     true
                 :compiler     {:main                 cljs.user
                                :asset-path           "js/compiled/dev"

@@ -11,7 +11,7 @@
                      ; can pass an atom, which means you hand normalized it already. Untangled ALWAYS normalizes incoming merged data
                      :initial-state (atom {
                                            :data-item {42 {:text "Nothing loaded..."}}
-                                           :some-data [:ui :data-item]})
+                                           :some-data [:data-item 42]})
                      ; Called right after the app has loaded and mounted on the DOM
                      :networking (net/make-untangled-network "/api")
                      :started-callback
