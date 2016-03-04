@@ -10,7 +10,7 @@
                  [lein-doo "0.1.6" :scope "test"]
                  [org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.228"]
-                 [org.omcljs/om "1.0.0-alpha30" :exclusions [cljsjs/react]]
+                 [org.omcljs/om "1.0.0-alpha31-SNAPSHOT" :exclusions [cljsjs/react]]
                  [navis/untangled-client "0.4.4" :exclusions [cljsjs/react org.omcljs/om]]
                  [navis/untangled-server "0.4.5"]
                  [navis/untangled-datomic "0.4.4" :exclusions [com.datomic/datomic-free org.clojure/tools.cli]]
