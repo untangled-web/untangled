@@ -3,6 +3,7 @@
     app.mutations
     [untangled.client.core :as uc]
     [untangled.client.data-fetch :as df]
+    [untangled.client.impl.network :as net]
     [app.ui :as ui]
     [om.next :as om]))
 
@@ -12,8 +13,9 @@
                                            :data-item {42 {:text "Nothing loaded..."}}
                                            :some-data [:ui :data-item]})
                      ; Called right after the app has loaded and mounted on the DOM
+                     :networking (net/make-untangled-network "/api")
                      :started-callback
-                     (fn [{:keys [reconciler]}]
+                     (fn [{:keys [reconciler] :as app}]
                        ; Load a query from the server into app state, eliding any of the :without keywords (recursively)
-                       (df/load-singleton reconciler (om/get-query ui/Root) :without #{:react-key :comments :app/locale})))))
+                       (df/load-singleton reconciler (om/get-query ui/Root) :without #{:comments})))))
 
