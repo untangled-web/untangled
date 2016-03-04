@@ -17,6 +17,8 @@ This results in the following core features:
     - The elimination of controller logic
     - The elimination of event systems
     - Fully synchronous UI model
+    - One-at-a-time network semantics (no out of order network requests, even in the presence of
+    optimistic updates)
     - Pure functions for rendering
     - Internationalization
         - GNU gettext-style internationalization. Trivial to use.
@@ -26,28 +28,37 @@ This results in the following core features:
     - Support VCR viewer: Users can submit problem reports that include a configurable number of replayable UI frames so
 that support can diagnose issues by watching what the user saw. Including server timestamps for log correlation.
     - A dramatically simpler overall application
-- Untangled Server: A component-based server, leveraging Ring
+- Untangled Server: A component-based server
+    - Uses components for hot reload during development
     - Pre-plumbed to support untangled clients with almost no work
     - Easy to customize configuration
-    - Pluggable modules for adding databases, handlers, API routes, etc.
-    - Modules can be made easily available to all server logic that processes client requests.
-- Untangled Datomic: A plugin for Untangled Server that helps you with Datomic as a back-end
+    - Pluggable components for adding databases, handlers, API routes, etc.
+    - Components can be made easily available to all server logic that processes client requests.
+- Untangled Datomic: A plugin component for Untangled Server for Datomic persistence
     - Extended schema support
     - Schema migration support
-    - Injectable component for the server to connect any number of databases
+    - Component for the server to connect any number of databases
+    - Databases are automatically injected into the processing pipeline
 - Untangled Spec: A behavior specification system
     - Write tests that read like specifications
     - Render the client tests as a specification outline in any number of browsers
-    - Render server tests as a specification outline.
+    - Run client tests via CI systems.
+    - Run/Render server tests as a specification outline (using test-refresh).
     - Human readable data output (pretty printed structure) and data diffs
     - Easy-to-use mocking
     - Async timeline simulation
-- Untangled Lein i18n: A leiningen plugin for extracting/compiling translations
+- Untangled Lein i18n: A leiningen plugin for extracting/compiling translations (IN PROGRESS: 75%)
     - Lein task to extract gettext-style POT files
-    - Use PoEdit to generate translations (.po files)
+    - Use standard gettext tools like PoEdit to generate translations (.po files)
     - Lein task to turn po files into loadable cljs translation modules.
 - Untangled Template 
-    - A full stack sample application
-- Untangled TodoMVC
+    - A full stack sample application (IN PROGRESS: 80%)
+- Untangled TodoMVC (IN PROGRESS: 95%)
     - An implementation of the standard Todo MVC application. 
     - Two versions: One client-only. One with full-stack persistence, optimistic updates, support VCR Viewer.
+    
+## This Repository
+
+This Repository is meant to house a simple demo project and the website files. It is in development, and the project
+that exists is not very impressive (though it does demonstrate a full-stack with initial and lazy loading). A more
+complete project is in the untangled-todomvc repository.
