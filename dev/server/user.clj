@@ -17,7 +17,8 @@
 ;;FIGWHEEL
 
 (def figwheel-config
-  {:figwheel-options {:css-dirs ["resources/public/css"]}
+  {:figwheel-options {:css-dirs ["resources/public/css"]
+                      :open-file-command "/Users/tonykay/projects/team/scripts/figwheel-intellij.sh"}
    :build-ids        ["dev" "test" "cards"]
    :all-builds       (figwheel-sidecar.repl/get-project-cljs-builds)})
 

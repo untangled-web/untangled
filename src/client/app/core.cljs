@@ -12,15 +12,21 @@
                      :initial-state (atom {
                                            :data-item   {42 {:text (tr "Nothing loaded...")}}
 
-                                           :main        {:singleton {:id :singleton :tab/label (tr "Main") :tab/type :main}}
+                                           :main        {:singleton {:id         :singleton
+                                                                     :tab/label  (tr "Main")
+                                                                     :tab/type   :main
+                                                                     :data-items nil}}
+
                                            :settings    {:singleton {:id :singleton :tab/label (tr "Settings") :tab/type :settings}}
 
-                                           :current-tab [:main :singleton] ; switch to :settings :singleton to change tabs
-
-                                           :some-data   [:ui :data-item]})
+                                           :current-tab [:main :singleton] ; switch to [:settings :singleton] to change tabs
+                                           })
                      ; Called right after the app has loaded and mounted on the DOM
                      :started-callback
                      (fn [{:keys [reconciler]}]
                        ; Load a query from the server into app state, eliding any of the :without keywords (recursively)
-                       (df/load-singleton reconciler (om/get-query ui/Root) :without #{:current-tab :comments})))))
+                       (df/load-collection reconciler
+                         [{:data-items (om/get-query ui/DataItem)}]
+                         :without #{:comments}
+                         :post-mutation 'post-initial-load)))))
 

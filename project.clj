@@ -44,7 +44,7 @@
                                :output-to            "resources/public/js/compiled/app.js"
                                :output-dir           "resources/public/js/compiled/dev"
                                :optimizations        :none
-                               :parallel-build       true
+                               :parallel-build       false
                                :verbose              false
                                :recompile-dependents true
                                :source-map-timestamp true}}
@@ -99,7 +99,8 @@
                                :output-dir    "i18n/out"
                                :optimizations :whitespace}}]}
 
-  :figwheel {:css-dirs ["resources/public/css"]}
+  :figwheel {:css-dirs ["resources/public/css"]
+             :open-file-command "/Users/tonykay/projects/team/scripts/figwheel-intellij.sh"}
 
   :untangled-i18n {:default-locale        "en-US"
                    :translation-namespace "app.i18n"
