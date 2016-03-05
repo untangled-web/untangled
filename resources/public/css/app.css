@@ -26,3 +26,20 @@ body {
     padding-left: 6px;
     padding-bottom: 8px;
 }
+
+.tabs {
+    list-style: none;
+    padding-left: 0px;
+}
+
+.tab {
+    display: inline;
+    border: 1px solid gray;
+    padding: 5px;
+    text-decoration: underline;
+    background-color: white;
+}
+
+.active-tab {
+    background-color: lightgray;
+}

@@ -97,12 +97,13 @@
   (query [this] [:ui/locale :ui/react-key {:current-tab (om/get-query Tab)}])
   Object
   (render [this]
-    (let [{:keys [current-tab ui/locale ui/react-key] :or {ui/react-key "ROOT"} :as props} (om/props this)]
+    (let [{:keys [current-tab ui/locale ui/react-key] :or {ui/react-key "ROOT"} :as props} (om/props this)
+          tab (:tab/type current-tab)]
       (dom/div #js {:key react-key}                         ; needed for forced re-render to work on locale changes and hot reload
         (dom/div nil
-          (dom/ul nil
-            (dom/li nil (dom/a #js {:onClick #(om/transact! this '[(nav/change-tab {:target :main})])} (tr "Main")))
-            (dom/li nil (dom/a #js {:onClick #(om/transact! this '[(nav/change-tab {:target :settings})])} (tr "Settings"))))
+          (dom/ul #js {:className "tabs"}
+            (dom/li #js {:className (str "tab" (if (= tab :main) " active-tab"))} (dom/a #js {:onClick #(om/transact! this '[(nav/change-tab {:target :main})])} (tr "Main")))
+            (dom/li #js {:className (str "tab" (if (= tab :settings) " active-tab"))} (dom/a #js {:onClick #(om/transact! this '[(nav/change-tab {:target :settings})])} (tr "Settings"))))
           (ui-tab current-tab))
 
         ;; the build in mutation for setting locale triggers re-renders of translated strings
