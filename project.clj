@@ -10,7 +10,7 @@
                  [lein-doo "0.1.6" :scope "test"]
                  [org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.228"]
-                 [org.omcljs/om "1.0.0-alpha30" :exclusions [cljsjs/react]]
+                 [org.omcljs/om "1.0.0-alpha31-SNAPSHOT" :exclusions [cljsjs/react]]
                  [navis/untangled-client "0.4.5-SNAPSHOT" :exclusions [cljsjs/react org.omcljs/om]]
                  [navis/untangled-server "0.4.5"]
                  [navis/untangled-datomic "0.4.4" :exclusions [com.datomic/datomic-free org.clojure/tools.cli]]
@@ -44,7 +44,7 @@
                                :output-to            "resources/public/js/compiled/app.js"
                                :output-dir           "resources/public/js/compiled/dev"
                                :optimizations        :none
-                               :parallel-build       true
+                               :parallel-build       false
                                :verbose              false
                                :recompile-dependents true
                                :source-map-timestamp true}}
@@ -99,7 +99,8 @@
                                :output-dir    "i18n/out"
                                :optimizations :whitespace}}]}
 
-  :figwheel {:css-dirs ["resources/public/css"]}
+  :figwheel {:css-dirs ["resources/public/css"]
+             :open-file-command "/Users/tonykay/projects/team/scripts/figwheel-intellij.sh"}
 
   :untangled-i18n {:default-locale        "en-US"
                    :translation-namespace "app.i18n"

@@ -10,11 +10,15 @@
   (timbre/error "Unrecognized mutation " k))
 
 ;; your query entry point (feel free to make multimethod). Standard Om fare here.
-(defn api-read [{:keys [query]} k params]
-  (Thread/sleep 1000) ; playground delay...make it seem like there is some server work involved
-  (case k
-    :some-data {:value {:text "Hello from the server!"}}
-    :data-item {:value {:comments [{:id 1 :text "Hi there!" :author "Sam"}
-                                   {:id 2 :text "Hooray!" :author "Sally"}
-                                   {:id 3 :text "La de da!" :author "Mary"}]}}
-    (timbre/error "Unrecognized query for " k " : " query)))
+(defn api-read [{:keys [ast query] :as env} dispatch-key params]
+  (Thread/sleep 10)
+  (case dispatch-key
+    :data-items {:value [{:db/id 1 :item/text "Data Item 1"}
+                         {:db/id 2 :item/text "Data Item 2"}]}
+    :data-item (let [{:keys [key]} ast]
+                 (if (= (second key) 1)
+                   {:value {:item/comments [{:id 1 :text "Hi there!" :author "Sam"}
+                                       {:id 2 :text "Hooray!" :author "Sally"}
+                                       {:id 3 :text "La de da!" :author "Mary"}]}}
+                   {:value {:item/comments [{:id 4 :text "Ooops!" :author "Sam"}]}}))
+    (timbre/error "Unrecognized query for " dispatch-key " : " query)))

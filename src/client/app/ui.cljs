@@ -14,7 +14,7 @@
   static om/IQuery
   ; ANY property namespaced to :ui/... will NEVER appear in a server query. They are automatically elided in the plubming
   ; for your convenience. This allows you to use things like :ui/visible to store state in the app state without having
-  ; to lose track of it, or deal with the server not wanting to see it!
+  ; to use local component state or deal with the server not wanting to see it in queries.
   ; See also data-fetch mutation helpers like `df/set-string!` (MEANT ONLY for UI attributes)
   (query [this] [:ui/fetch-state :id :author :text])
   static om/Ident
@@ -33,33 +33,81 @@
 
 (defui ^:once DataItem
   static om/IQuery
-  (query [this] [:ui/fetch-state :text {:comments (om/get-query Comment)}])
+  (query [this] [:ui/fetch-state :db/id :item/text {:item/comments (om/get-query Comment)}])
   static om/Ident
-  (ident [this props] [:data-item 42])
+  (ident [this props] [:data-item (:db/id props)])
   Object
   (render [this]
-    (let [{:keys [text comments]} (om/props this)]
+    (let [{:keys [item/text item/comments]} (om/props this)]
       (dom/div nil
         (dom/span nil text)
-        (when (nil? comments)
-          ; LAZY LOAD the comments. The original load elided comments. load-field derives the query from the UI,
-          ; roots it via the component's ident, and places state markers in the app state (so you can render spinners/loading).
-          ; lazily-loaded (read the source) is an example of how to leverage this.
-          ; IMPORTANT: The component to load MUST include :ui/fetch-state in order for you to see these state markers.
-          (dom/button #js {:onClick #(df/load-field this :comments)} (tr "Show comments")))
-        (df/lazily-loaded render-comments comments)))))
+        (dom/div #js {:className "comments"}
+          (when (nil? comments)
+            ; LAZY LOAD the comments. The original load elided comments. load-field derives the query from the UI,
+            ; roots it via the component's ident, and places state markers in the app state (so you can render spinners/loading).
+            ; lazily-loaded (read the source) is an example of how to leverage this.
+            ; IMPORTANT: The component to load MUST include :ui/fetch-state in order for you to see these state markers.
+            (dom/button #js {:className "show-button" :onClick #(df/load-field this :item/comments)} (tr "Show comments")))
+          (df/lazily-loaded render-comments comments))))))
 
-(def ui-data-item (om/factory DataItem))
+(def ui-data-item (om/factory DataItem {:keyfn :db/id}))
+
+(defui ^:once SettingsTab
+  static om/IQuery
+  (query [this] [:id :tab/type :tab/label])
+  Object
+  (render [this]
+    (dom/div nil
+      (dom/h1 nil "Settings")
+      (dom/p nil "Settings go here..."))))
+
+(def ui-settings-tab (om/factory SettingsTab))
+
+(defn render-data-items [items] (map ui-data-item items))
+
+(defui ^:once MainTab
+  static om/IQuery
+  (query [this] [:id :tab/type :tab/label {:data-items (om/get-query DataItem)}])
+  Object
+  (render [this]
+    (let [{:keys [data-items]} (om/props this)]
+      (dom/div nil
+        (dom/h1 nil (tr "Main: Data Items"))
+        (df/lazily-loaded render-data-items data-items)))))
+
+(def ui-main-tab (om/factory MainTab))
+
+(defui ^:once Tab
+  static om/IQuery
+  (query [this] {:main (om/get-query MainTab) :settings (om/get-query SettingsTab)})
+  static om/Ident
+  (ident [this props] [(:tab/type props) (:id props)])
+  Object
+  (render [this]
+    (let [{:keys [id tab/type] :as props} (om/props this)]
+      (case type
+        :main (ui-main-tab props)
+        :settings (ui-settings-tab props)
+        (dom/div nil "MISSING TAB")))))
+
+(def ui-tab (om/factory Tab))
 
 (defui ^:once Root
   static om/IQuery
-  (query [this] [:ui/locale :ui/react-key {:some-data (om/get-query DataItem)}])
+  (query [this] [:ui/locale :ui/react-key {:current-tab (om/get-query Tab)}])
   Object
   (render [this]
-    (let [{:keys [ui/locale ui/react-key some-data] :or {ui/react-key "ROOT"}} (om/props this)]
-      (dom/div #js {:key react-key}
+    (let [{:keys [current-tab ui/locale ui/react-key] :or {ui/react-key "ROOT"} :as props} (om/props this)
+          tab (:tab/type current-tab)]
+      (dom/div #js {:key react-key}                         ; needed for forced re-render to work on locale changes and hot reload
+        (dom/div nil
+          (dom/ul #js {:className "tabs"}
+            (dom/li #js {:className (str "tab" (if (= tab :main) " active-tab"))} (dom/a #js {:onClick #(om/transact! this '[(nav/change-tab {:target :main})])} (tr "Main")))
+            (dom/li #js {:className (str "tab" (if (= tab :settings) " active-tab"))} (dom/a #js {:onClick #(om/transact! this '[(nav/change-tab {:target :settings})])} (tr "Settings"))))
+          (ui-tab current-tab))
+
         ;; the build in mutation for setting locale triggers re-renders of translated strings
-        (dom/select #js {:value locale :onChange (fn [evt] (om/transact! this `[(ui/change-locale {:lang ~(.. evt -target -value)})]))}
+        (dom/select #js {:className "locale-selector" :value locale :onChange (fn [evt] (om/transact! this `[(ui/change-locale {:lang ~(.. evt -target -value)})]))}
           (dom/option #js {:value "en-US"} "English")
           (dom/option #js {:value "es-MX"} "Español"))
-        (df/lazily-loaded ui-data-item some-data)))))
+        ))))

@@ -12,7 +12,7 @@ with the Om Tutorial.
 We're developing this framework as part of our core software stack at NAVIS for production applications. 
 We will not consider this framework stable until Om becomes stable.
 
-The full stack framework includes (See [untangled-web](https://github.com/untangled-web) on Github):
+The full stack framework includes a number of libraries (See [untangled-web](https://github.com/untangled-web) on Github):
 
 - Untangled Client: A library that builds upon Om 1.0, but greatly simplifies overall application development. 
 This results in the following core features:
@@ -54,8 +54,8 @@ that support can diagnose issues by watching what the user saw. Including server
     - Lein task to extract gettext-style POT files
     - Use standard gettext tools like PoEdit to generate translations (.po files)
     - Lein task to turn po files into loadable cljs translation modules.
-- Untangled Template 
-    - A full stack sample application (IN PROGRESS: 80%)
+- Untangled Lein Template (IN PROGRESS: 50%, not deployed to clojars)
+    - A full stack sample application 
 - Untangled TodoMVC (IN PROGRESS: 95%)
     - An implementation of the standard Todo MVC application. 
     - Two versions: One client-only. One with full-stack persistence, optimistic updates, support VCR Viewer.
@@ -65,3 +65,21 @@ that support can diagnose issues by watching what the user saw. Including server
 This Repository is meant to house a simple demo project and the website files. It is in development, and the project
 that exists is not very impressive (though it does demonstrate a full-stack with initial and lazy loading). A more
 complete project is in the untangled-todomvc repository.
+
+## Understanding/Using the Code in this Repository
+
+### Configure the web server
+
+The server-side of Untangled requires you have a local web server configuration. There
+will always need to be a default file (already included) that specifies all 
+parameters for the server components. However, the server will not start unless
+you define (and create) a localized configuration file with overrides (which can contain just an
+empty map).
+
+Copy `resources/config/defaults.edn` to `/usr/local/etc/app.edn`.
+
+You'll note that the web server port is the only parameter for this application.
+
+### 
+
+Please see the Untangled Tour video at:
