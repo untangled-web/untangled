@@ -10,8 +10,8 @@
                  [lein-doo "0.1.6" :scope "test"]
                  [org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.228"]
-                 [org.omcljs/om "1.0.0-alpha31-SNAPSHOT" :exclusions [cljsjs/react]]
-                 [navis/untangled-client "0.4.5-SNAPSHOT" :exclusions [cljsjs/react org.omcljs/om]]
+                 [org.omcljs/om "1.0.0-alpha31" :exclusions [cljsjs/react]]
+                 [navis/untangled-client "0.4.6-SNAPSHOT" :exclusions [cljsjs/react org.omcljs/om]]
                  [navis/untangled-server "0.4.5"]
                  [navis/untangled-datomic "0.4.4" :exclusions [com.datomic/datomic-free org.clojure/tools.cli]]
                  [navis/untangled-spec "0.3.5" :scope "test" :exclusions [cljsjs/react-with-addons]]]
@@ -50,7 +50,7 @@
                                :source-map-timestamp true}}
 
                {:id           "cards"
-                :source-paths ["src/cards" "src/client" "src/shared"]
+                :source-paths ["src/cards" "src/client" "src/shared" "checkouts/untangled-client/src"]
                 :figwheel     {:devcards true}
                 :compiler     {:main                 app-cards.cards-ui
                                :asset-path           "js/compiled/cards"
