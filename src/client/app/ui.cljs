@@ -92,12 +92,22 @@
 
 (def ui-tab (om/factory Tab))
 
-(defui ^:once Root
+(defui ^:once RandomThing
   static om/IQuery
-  (query [this] [:ui/locale :ui/react-key {:current-tab (om/get-query Tab)}])
+  (query [this] [:a :b])
   Object
   (render [this]
-    (let [{:keys [current-tab ui/locale ui/react-key] :or {ui/react-key "ROOT"} :as props} (om/props this)
+    (let [{:keys [a b]} (om/props this)]
+      (dom/div nil (when a (str "A: " a))))))
+
+(def ui-random-thing (om/factory RandomThing))
+
+(defui ^:once Root
+  static om/IQuery
+  (query [this] [:ui/locale :ui/react-key {:current-tab (om/get-query Tab)} {:random-data (om/get-query RandomThing)}])
+  Object
+  (render [this]
+    (let [{:keys [current-tab ui/locale ui/react-key random-data] :or {ui/react-key "ROOT"} :as props} (om/props this)
           tab (:tab/type current-tab)]
       (dom/div #js {:key react-key}                         ; needed for forced re-render to work on locale changes and hot reload
         (dom/div nil
@@ -106,8 +116,17 @@
             (dom/li #js {:className (str "tab" (if (= tab :settings) " active-tab"))} (dom/a #js {:onClick #(om/transact! this '[(nav/change-tab {:target :settings})])} (tr "Settings"))))
           (ui-tab current-tab))
 
+        (dom/div nil
+          "Random test mutations"
+          (dom/br nil)
+          (dom/button #js {:onClick #(om/transact! this `[(app/do-random-thing)])} "Mutate on remote without follow-on read")
+          (dom/br nil)
+          (dom/button #js {:onClick #(om/transact! this `[(app/do-random-thing) (app/load ~{:query (om/get-query Root) :without #{:current-tab}})])} "Mutate on remote with random data return")
+          (dom/br nil)
+          (dom/button #js {:onClick #(om/transact! this '[(app/do-failing-remote-thing) (tx/fallback {:action app/handle-failure :failed-data "sample fallback data"})])} nil "Mutate with failure")
+          (ui-random-thing random-data))
+
         ;; the build in mutation for setting locale triggers re-renders of translated strings
         (dom/select #js {:className "locale-selector" :value locale :onChange (fn [evt] (om/transact! this `[(ui/change-locale {:lang ~(.. evt -target -value)})]))}
           (dom/option #js {:value "en-US"} "English")
-          (dom/option #js {:value "es-MX"} "Español"))
-        ))))
+          (dom/option #js {:value "es-MX"} "Español"))))))

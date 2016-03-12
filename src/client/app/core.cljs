@@ -27,6 +27,6 @@
                        ; Load a query from the server into app state, eliding any of the :without keywords (recursively)
                        (df/load-collection reconciler
                          [{:data-items (om/get-query ui/DataItem)}]
-                         :without #{:comments}
+                         :without #{:comments :random-data}
                          :post-mutation 'post-initial-load)))))
 
