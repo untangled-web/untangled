@@ -1,5 +1,7 @@
 # The Untangled Web Framework
 
+See [the promotional video](https://youtu.be/CoMyszwN50g) for a quick introduction.
+
 The Untangled web framework is a ClojureScript web framework that blends various web development libraries together
 with a good bit of glue code to make single-page webapps a breeze. It is a full-stack environment, but you can
 pick and choose the pieces you wish to use.
@@ -80,6 +82,3 @@ Copy `resources/config/defaults.edn` to `/usr/local/etc/app.edn`.
 
 You'll note that the web server port is the only parameter for this application.
 
-### 
-
-Please see the Untangled Tour video at:
