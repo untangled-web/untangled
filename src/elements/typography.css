@@ -204,8 +204,8 @@ a[href]:not([class]) {
 }
 
 p {
-  line-height: 1.4;
-  margin-bottom: 1em;
+  line-height: 1.5;
+  margin-bottom: 1.5em;
 }
 
 small {

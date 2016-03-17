@@ -64,34 +64,11 @@
   /* stylelint-enable */
 }
 
-/* Application Scope */
-
-.s-app {
-  @mixin app-leader;
-}
-
-.s-app__container {
-  @mixin app-leader;
-  overflow-x: hidden;
-}
-
-.s-app__body {
-  @mixin app-leader;
-  @mixin flex-layout;
-  margin-top: 56px;
-  @media (--md-up) {
-    margin-top: var(--header-height); /* combined height of .o-header */
-  }
-}
-
 .o-body {
   @mixin flex-layout;
 }
 
 .o-main {
-  @mixin container-fluid;
-  @mixin row;
-  @mixin row-break;
   flex-direction: column;
   position: relative;
   @media (--md-up) {

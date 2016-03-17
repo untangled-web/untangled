@@ -66,7 +66,7 @@
   --nav-copy: var(--grey-500);
   --nav-active-color: var(--blue-700);
   --nav-active-copy: var(--white);
-  --link-color: var(--blue-700);
+  --link-color: var(--secondary-color);
   --sidenav-color: var(--blue-50);
   --sidenav-shadow: 0 0 6px rgba(0, 0, 0, .3);
 }
