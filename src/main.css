@@ -53,9 +53,13 @@ h1, h2, h3, h4, h5, h6 {
 .o-catch {
   font-family: 'Ubuntu', sans-serif;
   color: var(--secondary-color);
-  font-size: 2em;
+  font-size: 1.5em;
   em {
     color: var(--black);
+  }
+
+  @media (--md-up) {
+    font-size: 2em;
   }
 }
 
