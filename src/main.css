@@ -63,6 +63,18 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.o-callout {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1.25em;
+  em {
+    color: var(--black);
+  }
+
+  @media (--md-up) {
+    font-size: 1.5em;
+  }
+}
+
 .o-video {
   position: relative;
   padding-bottom: 56.25%;
