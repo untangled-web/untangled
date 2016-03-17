@@ -58,6 +58,84 @@
         </div>
         </div>
         </div>
+        <div class="u-row">
+          <div class="u-column u-column--10@md u-push--1">
+
+            <div class="u-row">
+              <div class="u-column u-column--6@md">
+            <h2>Why Untangled?</h2>
+
+            <p>Untangled has this central design criteria: Eliminate as much incidental complexity as possible. Allow the developer to solve the problem at hand without having to juggle arbitrary boilerplate code and patterns that are unrelated to the real problem.</p>
+
+            <p>Some of the items that generate this incidental complexity in today's webapps are:</p>
+
+            <ul>
+              <li>Mutable state</li>
+              <li>Object-oriented artifacts that poorly fit the problem domain</li>
+              <li>Controllers that cobble together UI, user interaction, and model logic</li>
+              <li>Ever-expanding screen-specific REST interfaces that are intended to be "general" but end up being specialized.</li>
+              <li>Hidden (mutable) state that gets out of sync with reality (e.g. why is that date picker still showing?)</li>
+              <li>Testing suites that are hard to set up, and don't run in the real environments you use, or that stress the UI instead of getting the real logic correct.</li>
+              <li>UI tied to concrete domain logic (instead of abstractions)</li>
+              <li>Two-way data binding</li>
+            </ul>
+
+            <p>Untangled offers a pretty radical approach based on a combination of ideas from leading thinkers in software development. At the same time it is intended to be as pragmatic and usable as possible *today*. The Untangled team is a set of motivated professionals that use the framework in a production environment to generate real enterprise applications.</p>
+            </div>
+            <div class="u-column u-column--6@md">
+
+            <h2>Why ClojureScript?</h2>
+
+            <p>Our desire was to have a full-stack functional programming environment. The Clojure/ClojureScript story and pairing are actually quite compelling in this respect:</p>
+
+            <ul>
+              <li>A common, powerful, functional programming language for client and server.</li>
+              <li>Metaprogramming (e.g. macros) that are much simpler than alternatives.</li>
+              <li>Runs on the JVM (clj) and all browsers (cljs)</li>
+              <li>A wonderful immutable app-state story for the browser. Leads to all sorts of powerful and useful results.</li>
+              <li>Powerful (Google Closure) compiler support for optimization and minification</li>
+              <li>Existing tools supporting hot code/css reload (without losing app state)</li>
+              <li>Common data structures that can be used on-the-wire</li>
+              <li>Browser libraries like Om that significantly simplify the webapp architecture</li>
+            </ul>
+
+            </div>
+            <div class="u-column u-column--6@md">
+
+            <h2>Simple, you say? Looks hard to me!</h2>
+
+            <p>We consider simplicity an objective measurement: Minimal complexity. Easy and hard are relative terms (e.g. German might be easy for you and hard for me).  We derive this standpoint both from our collective experience and from Rich Hickey's wonderful expression of it in his talk Simple Made Easy.  Hard is something you can address on a personal or team level through training and time. Complexity is, well, complex!  Looking at problems from different angles can often reveal simplifications, but eventually you'll arrive at the simplest possible solution (yet found). To us, hard is about the ability to reason. It is about not knowing what happens because of out-of-order execution. It is about having to write and understand dependency injection for every artifact in a system. It's about work and thought that just gets in the way of solving your problem.</p>
+
+            </div>
+            <div class="u-column u-column--6@md">
+
+            <h2>Untangled Core Concepts</h2>
+
+            <p>Untangled leverages a lot of things that were pioneered in Om 1.0 by David Nolen, and adds it's own layers of simplification and opinion. The things you need to understand in order to build a simple application are:</p>
+
+            <ul>
+            <li>The client database format</li>
+            <li>How UI queries work</li>
+            <li>Basic mutations/transactions that update the database</li>
+            </ul>
+
+            <p>It's that simple! Om deals with the rendering story. You model your data in a very simple-to-understand graph database format, write some queries and mutations, and you're well on your way to done!</p>
+            <p>Om keeps the UI up-to-date (with some nicely abstracted help from you). Untangled adds in the networking, testing, unhappy path considerations, temporary ID handling, predictable server data merging, sequential semantics, i18n, and more.</p>
+            <p>Extending that to a server requires you know almost nothing new! The same code structure for mutation is used there, with very slight augmentation for dealing with temporary IDs. The one additional server requirement is that you learn how to handle data queries from Om.</p>
+            </div>
+            </div>
+            <div class="u-row o-catch">
+              <div class="u-column u-column--10@md">
+              <p>Four high-level concepts which <em>can be hard at first</em>, but soon become <em>easy</em>. So, which do you want: easy to start and hard to maintain, or a little hard to start, and much simpler in the long run?</p>
+              </div>
+            </div>
+
+          <div class="u-row u-center">
+            <a class="c-button" href="docs.html">Getting Started</a>
+            <a class="c-button--secondary" href="https://github.com/untangled-web/untangled">View on Github</a>
+          </div>
+          </div>
+        </div>
       </article>
 		</main>
 

@@ -21,7 +21,9 @@
 }
 
 .c-iconbar__list {
-  text-align: center
+  text-align: center;
+  padding: 0;
+  margin: 0;
 }
 
 .c-iconbar__link {

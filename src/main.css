@@ -50,6 +50,16 @@ h1, h2, h3, h4, h5, h6 {
   color: #999;
 }
 
+.o-catch {
+  font-family: 'Ubuntu', sans-serif;
+  color: var(--secondary-color);
+  padding: 1em;
+  font-size: 2em;
+  em {
+    color: var(--black);
+  }
+}
+
 .o-video {
   position: relative;
   padding-bottom: 56.25%;

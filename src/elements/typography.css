@@ -208,6 +208,13 @@ p {
   margin-bottom: 1.5em;
 }
 
+ul,
+ol {
+  line-height: 1.5;
+  padding-left: 1em;
+  margin-bottom: 1.5em;
+}
+
 small {
   display: block;
   font-size: 75%;
