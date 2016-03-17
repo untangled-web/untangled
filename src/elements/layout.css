@@ -1,0 +1,136 @@
+/*---
+ title: Layout
+ section: Elements
+ ---
+
+ The main layout depends on the `.s-app` class to render a holy grail layout that scales down nicely to mobile.
+
+ <div class="u-column--6@md">
+ <img src="dist/img/layout-holy-grail.svg" alt="">
+ </div>
+
+ [Mozilla - Holy Grail Layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Using_CSS_flexible_boxes#Holy_Grail_Layout_example)
+ */
+
+@define-mixin flex-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+@define-mixin reset-all-the-things {
+  border-style: solid;
+  border-width: 0;
+  box-sizing: inherit;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@define-mixin app-leader {
+  height: calc(100vh - 112px);
+  overflow-x: hidden;
+}
+
+/* Global Styles */
+
+::before,
+::after {
+  @mixin reset-all-the-things;
+  text-decoration: inherit;
+  vertical-align: inherit;
+}
+
+* {
+  @mixin reset-all-the-things;
+  background-repeat: no-repeat;
+  font-size: inherit;
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --header-height: 56px;
+  --sidenav-width: 12.25em;
+  /* stylelint-disable root-no-standard-properties */
+  background-color: var(--background-color);
+  box-sizing: border-box;
+  cursor: default;
+  margin: 0;
+  -ms-overflow-style: -ms-autohiding-scrollbar; /* Edge 12+, Internet Explorer 11- */
+  overflow-x: hidden;
+  overflow-y: scroll; /* All browsers without overlaying scrollbars */
+  width: 100%;
+  /* stylelint-enable */
+}
+
+/* Application Scope */
+
+.s-app {
+  @mixin app-leader;
+}
+
+.s-app__container {
+  @mixin app-leader;
+  overflow-x: hidden;
+}
+
+.s-app__body {
+  @mixin app-leader;
+  @mixin flex-layout;
+  margin-top: 56px;
+  @media (--md-up) {
+    margin-top: var(--header-height); /* combined height of .o-header */
+  }
+}
+
+.o-body {
+  @mixin flex-layout;
+}
+
+.o-main {
+  @mixin container-fluid;
+  @mixin row;
+  @mixin row-break;
+  flex-direction: column;
+  position: relative;
+  @media (--md-up) {
+    flex-direction: row;
+  }
+}
+
+.o-nav {
+  @mixin reset-mobile-order;
+  background-color: var(--sidenav-color);
+  box-shadow: var(--sidenav-shadow);
+  flex: 1 6 20%;
+  height: 230px;
+  order: 1;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding-right: 0;
+  @media (--md-up) {
+    height: 100%;
+    position: fixed;
+    width: var(--sidenav-width);
+    z-index: 10;
+  }
+
+  .c-button,
+  .c-button--secondary,
+  .c-input {
+    border-radius: 0 !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+.o-article {
+  @mixin reset-mobile-order;
+  flex: 2 1 100%;
+  order: 2;
+  position: relative;
+  .o-nav + & {
+    flex: 2 1 80%;
+    @media (--md-up) { margin-left: var(--sidenav-width); }
+  }
+}

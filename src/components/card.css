@@ -1,0 +1,93 @@
+/*---
+ section: Patterns
+ title: Card
+ ---
+
+ ```example:html
+ <div class="c-card">
+   <h3>Card Title</h3>
+   <p>I could have used lorem ipsum, but what's the fun in that?</p>
+ </div>
+ ```
+
+ ```example:html
+ <div class="c-card--transparent">
+   <h3>Card Transparent</h3>
+   <p>I could have used lorem ipsum, but what's the fun in that?</p>
+ </div>
+ ```
+
+ ```example:html
+ <div class="c-card--list">
+   <h3>Card List</h3>
+   <p>I could have used lorem ipsum, but what's the fun in that?</p>
+ </div>
+ ```
+ */
+
+@define-mixin card-block $card-margin: 0 0 1em {
+  margin: $card-margin;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+@define-mixin card-inline $card-margin: 0 0 1em, $card-min-width: 100px {
+  @mixin card-block $card-margin;
+  display: inline-block;
+  max-width: 100%;
+  min-width: $card-min-width;
+}
+
+@define-mixin card-solid $card-color: #f7f7f7, $card-text-color: #444, $card-shadow: 0 2px 2px rgba(0, 0, 0, .4) {
+  background-color: $card-color;
+  box-shadow: $card-shadow;
+  color: $card-text-color;
+}
+
+@define-mixin card-hollow $card-color: #444, $card-border-width: 1px, $card-border-style: solid {
+  border-color: $card-color;
+  border-style: $card-border-style;
+  border-width: $card-border-width;
+  color: $card-color;
+}
+
+@define-mixin card $background: var(--white), $shadow: 0 0 10px rgba(0, 0, 0, .4) {
+  @mixin card-block;
+  @mixin card-solid $background, #444, $shadow;
+  padding: .5rem 1rem;
+
+  /* TODO Change this to &__heading class */
+  :--headings { margin-top: 10px; }
+
+  &__title {
+    @mixin row;
+    @mixin middle;
+    background-color: var(--grey-100);
+    margin: -.5rem -1rem 0;
+    min-height: 38px;
+    padding: 2px 10px;
+
+    /* TODO Change this to &__heading class */
+    :--headings {
+      display: inline-block;
+      font-weight: bold;
+      margin: 0;
+    }
+  }
+}
+
+@define-mixin card-row {
+  @mixin card-block;
+  @mixin card-solid var(--white), #444, 0 1px 4px rgba(0, 0, 0, .4);
+  margin-bottom: 0;
+}
+
+.c-card { @mixin card; }
+
+.c-card--row { @mixin card-row; }
+
+.c-card--transparent {
+  @mixin card transparent;
+  box-shadow: none !important;
+}

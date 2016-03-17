@@ -1,0 +1,47 @@
+.o-preview {
+  @mixin modal;
+  position: fixed;
+
+  input,
+  label,
+  textarea {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .c-modal__card {
+    @mixin attach-middle;
+    margin-left: 7em;
+  }
+
+  .c-modal__close {
+    @media (--md-up) {
+      left: 14em;
+      top: 115px;
+    }
+  }
+
+  .c-modal__content {
+    padding: 10px 18px 16px;
+  }
+
+  section {
+    background-color: var(--white);
+    border-radius: 4px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, .5);
+    margin-bottom: 16px;
+    padding: 16px;
+  }
+
+  small {
+    color: var(--blue-800);
+    margin-bottom: 2em;
+  }
+
+  .o-hang {
+    display: inline-block;
+    float: right;
+    overflow: hidden;
+    width: 90%;
+  }
+}

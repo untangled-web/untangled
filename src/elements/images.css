@@ -1,0 +1,53 @@
+/*---
+ section: Elements
+ title: Images
+ ---
+
+## Color-charged Spectrum Classes
+
+* `is-positive`
+* `is-neutral`
+* `is-live`
+* `is-alterable`
+* `is-negative`
+
+ */
+
+@define-mixin circle $bgColor: var(--neutral-color), $color: var(--white), $padding: 6px {
+  background-color: $bgColor;
+  border-radius: 50px;
+  color: $color;
+  padding: $padding;
+  .o-icon {
+    height: 16px;
+    width: 16px;
+  }
+}
+
+img { width: 100%; }
+
+/* Color-Charged Spectrum */
+
+.is-positive { color: var(--positive-color); }
+.is-neutral { color: var(--neutral-color); }
+.is-live { color: var(--gold-500); }
+.is-alterable { color: var(--alterable-color); }
+.is-negative { color: var(--negative-color); }
+
+.o-circle { @mixin circle var(--neutral-color); }
+.o-circle--blue { @mixin circle var(--blue-600); }
+.o-circle--red { @mixin circle var(--negative-color); }
+.o-circle--green { @mixin circle var(--positive-color); }
+.o-circle--yellow { @mixin circle var(--gold-500); }
+
+.o-image--small {
+  max-height: 200px;
+  max-width: 200px;
+}
+
+.o-facebook-logo,
+.o-twitter-logo {
+  path {
+    fill: var(--grey-700);
+  }
+}

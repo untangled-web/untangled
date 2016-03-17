@@ -1,0 +1,376 @@
+@import 'media';
+
+/* stylelint-disable rule-properties-order */
+
+:root {
+  /* Grid */
+  --global-gutter-width: 1rem;
+  --global-outter-margin: 1rem;
+  --global-small-media-min: 48;
+  --global-medium-media-min: 64;
+  --global-large-media-min: 75;
+  --gutter-width: var(--global-gutter-width);
+  --outter-margin: var(--global-outter-margin);
+  --gutter-compensation: calc((var(--gutter-width) * .5) * -1);
+  --half-gutter-width: calc((var(--gutter-width) * .5));
+  --sm-min: var(--global-small-media-min);
+  --md-min: var(--global-medium-media-min);
+  --lg-min: var(--global-large-media-min);
+  --container-sm: calc(var(--sm-min) + var(--gutter-width));
+  --container-md: calc(var(--md-min) + var(--gutter-width));
+  --container-lg: calc(var(--lg-min) + var(--gutter-width));
+  --col: calc(100% / 12);
+  --col-1: var(--col);
+  --col-2: calc(var(--col) * 2);
+  --col-3: calc(var(--col) * 3);
+  --col-4: calc(var(--col) * 4);
+  --col-5: calc(var(--col) * 5);
+  --col-6: calc(var(--col) * 6);
+  --col-7: calc(var(--col) * 7);
+  --col-8: calc(var(--col) * 8);
+  --col-9: calc(var(--col) * 9);
+  --col-10: calc(var(--col) * 10);
+  --col-11: calc(var(--col) * 11);
+  --col-12: calc(var(--col) * 12);
+}
+/* stylelint-enable */
+
+@define-mixin reset-box {
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@define-mixin reset-mobile-order {
+  @media (--sm-down) {
+    order: 0 !important;
+  }
+}
+
+@define-mixin spacer { flex: auto; }
+
+/* Containers */
+
+@define-mixin container {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@define-mixin container-flex {
+  @mixin reset-box;
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+}
+
+@define-mixin container-fluid {
+  @mixin container;
+  padding-left: var(--outter-margin);
+  padding-right: var(--outter-margin);
+}
+
+/* Row */
+
+@define-mixin row {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: var(--gutter-compensation);
+  margin-right: var(--gutter-compensation);
+}
+
+/* Columns */
+
+@define-mixin column-pattern {
+  box-sizing: border-box;
+  flex: 1 0 0%;
+  max-width: 100%;
+  padding-left: var(--half-gutter-width);
+  padding-right: var(--half-gutter-width);
+}
+
+@define-mixin column $width {
+  flex-basis: var(--col-$(width)) !important; /* IE11 */
+  max-width: var(--col-$(width)) !important;
+  @mixin column-pattern;
+}
+
+@define-mixin push $width { margin-left: var(--col-$(width)); }
+
+@define-mixin pull $width { margin-right: var(--col-$(width)); }
+
+@define-mixin start {
+  justify-content: flex-start !important;
+  text-align: start;
+}
+
+@define-mixin center {
+  justify-content: center !important;
+  text-align: center;
+}
+
+@define-mixin end {
+  justify-content: flex-end !important;
+  text-align: end;
+}
+
+@define-mixin text-align $x, $y {
+  align-items: $y;
+  display: flex;
+  justify-content: $x;
+}
+
+@define-mixin text-center { @mixin text-align center, center; }
+
+@define-mixin text-middle { @mixin text-align flex-start, center; }
+
+@define-mixin top { align-items: flex-start; }
+
+@define-mixin middle { align-items: center; }
+
+@define-mixin bottom { align-items: flex-end; }
+
+@define-mixin around { justify-content: space-around; }
+
+@define-mixin between { justify-content: space-between; }
+
+@define-mixin row-reverse { flex-direction: row-reverse; }
+
+@define-mixin column-reverse { flex-direction: column-reverse; }
+
+@define-mixin first { order: -1; }
+
+@define-mixin last { order: 1; }
+
+@define-mixin row-break {
+  margin-left: calc(-1rem - 1px);
+  margin-right: calc(-1rem - 1px);
+}
+
+@define-mixin row-collapse {
+  & > [class*='u-column'] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  input {
+    margin-bottom: 0 !important;
+    @media (--md-up) {
+      margin-bottom: 4px !important;
+    }
+  }
+}
+
+/* Grid classes */
+
+.u-row { @mixin row; }
+.u-row--reverse { @mixin row-reverse; }
+.u-first { @mixin first; }
+.u-last { @mixin last; }
+.u-row--break { @mixin row-break; }
+.u-row--collapse { @mixin row-collapse; }
+.u-column { @mixin column-pattern; }
+.u-column--reverse { @mixin column-reverse; }
+.u-column--1 { @mixin column 1; }
+.u-column--2 { @mixin column 2; }
+.u-column--3 { @mixin column 3; }
+.u-column--4 { @mixin column 4; }
+.u-column--5 { @mixin column 5; }
+.u-column--6 { @mixin column 6; }
+.u-column--7 { @mixin column 7; }
+.u-column--8 { @mixin column 8; }
+.u-column--9 { @mixin column 9; }
+.u-column--10 { @mixin column 10; }
+.u-column--11 { @mixin column 11; }
+.u-column--12 { @mixin column 12; }
+
+.u-push--1 { @mixin push 1; }
+.u-push--2 { @mixin push 2; }
+.u-push--3 { @mixin push 3; }
+.u-push--4 { @mixin push 4; }
+.u-push--5 { @mixin push 5; }
+.u-push--6 { @mixin push 6; }
+.u-push--7 { @mixin push 7; }
+.u-push--8 { @mixin push 8; }
+.u-push--9 { @mixin push 9; }
+.u-push--10 { @mixin push 10; }
+.u-push--11 { @mixin push 11; }
+
+.u-pull--1 { @mixin pull 1; }
+.u-pull--2 { @mixin pull 2; }
+.u-pull--3 { @mixin pull 3; }
+.u-pull--4 { @mixin pull 4; }
+.u-pull--5 { @mixin pull 5; }
+.u-pull--6 { @mixin pull 6; }
+.u-pull--7 { @mixin pull 7; }
+.u-pull--8 { @mixin pull 8; }
+.u-pull--9 { @mixin pull 9; }
+.u-pull--10 { @mixin pull 10; }
+.u-pull--11 { @mixin pull 11; }
+
+/* Grid Utilities */
+
+.u-start { @mixin start; }
+.u-center { @mixin center; }
+.u-end { @mixin end; }
+.u-text-center { @mixin text-align center, center; }
+.u-text-middle { @mixin text-align flex-start, center; }
+.u-top { @mixin top; }
+.u-middle { @mixin middle; }
+.u-bottom { @mixin bottom; }
+.u-around { @mixin around; }
+.u-between { @mixin between; }
+
+@media (--sm-down) {
+  .u-container { width: var(--container-sm, 46rem); }
+  .u-column\@sm { @mixin column-pattern; }
+  .u-column--1\@sm { @mixin column 1; }
+  .u-column--2\@sm { @mixin column 2; }
+  .u-column--3\@sm { @mixin column 3; }
+  .u-column--4\@sm { @mixin column 4; }
+  .u-column--5\@sm { @mixin column 5; }
+  .u-column--6\@sm { @mixin column 6; }
+  .u-column--7\@sm { @mixin column 7; }
+  .u-column--8\@sm { @mixin column 8; }
+  .u-column--9\@sm { @mixin column 9; }
+  .u-column--10\@sm { @mixin column 10; }
+  .u-column--11\@sm { @mixin column 11; }
+  .u-column--12\@sm { @mixin column 12; }
+  .u-column--last\@sm { @mixin last; }
+  .u-column--first\@sm { @mixin first; }
+  .u-push--1\@sm { @mixin push 1; }
+  .u-push--2\@sm { @mixin push 2; }
+  .u-push--3\@sm { @mixin push 3; }
+  .u-push--4\@sm { @mixin push 4; }
+  .u-push--5\@sm { @mixin push 5; }
+  .u-push--6\@sm { @mixin push 6; }
+  .u-push--7\@sm { @mixin push 7; }
+  .u-push--8\@sm { @mixin push 8; }
+  .u-push--9\@sm { @mixin push 9; }
+  .u-push--10\@sm { @mixin push 10; }
+  .u-push--11\@sm { @mixin push 11; }
+  .u-pull--1\@sm { @mixin pull 1; }
+  .u-pull--2\@sm { @mixin pull 2; }
+  .u-pull--3\@sm { @mixin pull 3; }
+  .u-pull--4\@sm { @mixin pull 4; }
+  .u-pull--5\@sm { @mixin pull 5; }
+  .u-pull--6\@sm { @mixin pull 6; }
+  .u-pull--7\@sm { @mixin pull 7; }
+  .u-pull--8\@sm { @mixin pull 8; }
+  .u-pull--9\@sm { @mixin pull 9; }
+  .u-pull--10\@sm { @mixin pull 10; }
+  .u-pull--11\@sm { @mixin pull 11; }
+  .u-start\@sm { @mixin start; }
+  .u-center\@sm { @mixin center; }
+  .u-end\@sm { @mixin end; }
+  .u-text-center\@sm { @mixin text-center; }
+  .u-text-middle\@sm { @mixin text-middle; }
+  .u-top\@sm { @mixin top; }
+  .u-middle\@sm { @mixin middle; }
+  .u-bottom\@sm { @mixin bottom; }
+  .u-around\@sm { @mixin around; }
+  .u-between\@sm { @mixin between; }
+}
+
+@media (--md-up) {
+  .u-column\@md { @mixin column-pattern; }
+  .u-column--1\@md { @mixin column 1; }
+  .u-column--2\@md { @mixin column 2; }
+  .u-column--3\@md { @mixin column 3; }
+  .u-column--4\@md { @mixin column 4; }
+  .u-column--5\@md { @mixin column 5; }
+  .u-column--6\@md { @mixin column 6; }
+  .u-column--7\@md { @mixin column 7; }
+  .u-column--8\@md { @mixin column 8; }
+  .u-column--9\@md { @mixin column 9; }
+  .u-column--10\@md { @mixin column 10; }
+  .u-column--11\@md { @mixin column 11; }
+  .u-column--12\@md { @mixin column 12; }
+  .u-column--last\@md { @mixin last; }
+  .u-column--first\@md { @mixin first; }
+  .u-push--1\@md { @mixin push 1; }
+  .u-push--2\@md { @mixin push 2; }
+  .u-push--3\@md { @mixin push 3; }
+  .u-push--4\@md { @mixin push 4; }
+  .u-push--5\@md { @mixin push 5; }
+  .u-push--6\@md { @mixin push 6; }
+  .u-push--7\@md { @mixin push 7; }
+  .u-push--8\@md { @mixin push 8; }
+  .u-push--9\@md { @mixin push 9; }
+  .u-push--10\@md { @mixin push 10; }
+  .u-push--11\@md { @mixin push 11; }
+  .u-pull--1\@md { @mixin pull 1; }
+  .u-pull--2\@md { @mixin pull 2; }
+  .u-pull--3\@md { @mixin pull 3; }
+  .u-pull--4\@md { @mixin pull 4; }
+  .u-pull--5\@md { @mixin pull 5; }
+  .u-pull--6\@md { @mixin pull 6; }
+  .u-pull--7\@md { @mixin pull 7; }
+  .u-pull--8\@md { @mixin pull 8; }
+  .u-pull--9\@md { @mixin pull 9; }
+  .u-pull--10\@md { @mixin pull 10; }
+  .u-pull--11\@md { @mixin pull 11; }
+  .u-start\@md { @mixin start; }
+  .u-center\@md { @mixin center; }
+  .u-end\@md { @mixin end; }
+  .u-text-center\@md { @mixin text-center; }
+  .u-text-middle\@md { @mixin text-middle; }
+  .u-top\@md { @mixin top; }
+  .u-middle\@md { @mixin middle; }
+  .u-bottom\@md { @mixin bottom; }
+  .u-around\@md { @mixin around; }
+  .u-between\@md { @mixin between; }
+}
+
+@media (--lg-up) {
+  .u-column\@lg { @mixin column-pattern; }
+  .u-column--1\@lg { @mixin column 1; }
+  .u-column--2\@lg { @mixin column 2; }
+  .u-column--3\@lg { @mixin column 3; }
+  .u-column--4\@lg { @mixin column 4; }
+  .u-column--5\@lg { @mixin column 5; }
+  .u-column--6\@lg { @mixin column 6; }
+  .u-column--7\@lg { @mixin column 7; }
+  .u-column--8\@lg { @mixin column 8; }
+  .u-column--9\@lg { @mixin column 9; }
+  .u-column--10\@lg { @mixin column 10; }
+  .u-column--11\@lg { @mixin column 11; }
+  .u-column--12\@lg { @mixin column 12; }
+  .u-column--last\@lg { @mixin last; }
+  .u-column--first\@lg { @mixin first; }
+  .u-push--1\@lg { @mixin push 1; }
+  .u-push--2\@lg { @mixin push 2; }
+  .u-push--3\@lg { @mixin push 3; }
+  .u-push--4\@lg { @mixin push 4; }
+  .u-push--5\@lg { @mixin push 5; }
+  .u-push--6\@lg { @mixin push 6; }
+  .u-push--7\@lg { @mixin push 7; }
+  .u-push--8\@lg { @mixin push 8; }
+  .u-push--9\@lg { @mixin push 9; }
+  .u-push--10\@lg { @mixin push 10; }
+  .u-push--11\@lg { @mixin push 11; }
+  .u-pull--1\@lg { @mixin pull 1; }
+  .u-pull--2\@lg { @mixin pull 2; }
+  .u-pull--3\@lg { @mixin pull 3; }
+  .u-pull--4\@lg { @mixin pull 4; }
+  .u-pull--5\@lg { @mixin pull 5; }
+  .u-pull--6\@lg { @mixin pull 6; }
+  .u-pull--7\@lg { @mixin pull 7; }
+  .u-pull--8\@lg { @mixin pull 8; }
+  .u-pull--9\@lg { @mixin pull 9; }
+  .u-pull--10\@lg { @mixin pull 10; }
+  .u-pull--11\@lg { @mixin pull 11; }
+  .u-start\@lg { @mixin start; }
+  .u-center\@lg { @mixin center; }
+  .u-end\@lg { @mixin end; }
+  .u-text-center\@lg { @mixin text-center; }
+  .u-text-middle\@lg { @mixin text-middle; }
+  .u-top\@lg { @mixin top; }
+  .u-middle\@lg { @mixin middle; }
+  .u-bottom\@lg { @mixin bottom; }
+  .u-around\@lg { @mixin around; }
+  .u-between\@lg { @mixin between; }
+}

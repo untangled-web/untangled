@@ -1,0 +1,190 @@
+/*---
+ section: Components
+ title: Accordion
+ ---
+
+ A simple accordion with a gradient of blue. More advanced use cases to come.
+
+ ```example:html
+ <nav class="c-accordion">
+   <ul class="c-accordion__list c-accordion__list--top">
+     <li class="c-accordion__item has-descendants is-open">
+       <span class="c-accordion__label">Top item 1</label>
+       <ul class="c-accordion__list c-accordion__list--mid">
+         <li class="c-accordion__item>
+           <span class="c-accordion__title">Mid item 1</span>
+         </li>
+         <li class="c-accordion__item has-descendants">
+           <span class="c-accordion__title">Mid item 1</label>
+           <ul class="c-accordion__list c-accordion__list--bottom">
+             <li><span>
+               <strong>Bottom item 1</strong>
+               <div>Description</div>
+             </span></li>
+             <li><span>
+               <strong>Bottom item 2</strong>
+               <div>Description</div>
+             </span></li>
+           </ul>
+         </li>
+         <li><span class="c-accordion__title">Mid item 3</span></li>
+         <li><span class="c-accordion__title">Mid item 4</span></li>
+       </ul>
+   </ul>
+   <a class="c-accordion__toggle"></a>
+ </nav>
+ ```
+
+ #### Customize
+
+ ```css
+
+  --accordion-top-color: var(--blue-400);
+  --accordion-mid-color: var(--blue-100);
+  --accordion-bottom-color: var(--blue-50);
+  --accordion-hover-color: var(--blue-800);
+  --accordion-text-color: var(--grey-800);
+  --accordion-toggle-color: var(--grey-500);
+  ```
+ */
+
+:root {
+  --accordion-top-color: var(--blue-100);
+  --accordion-mid-color: var(--blue-50);
+  --accordion-bottom-color: var(--blue-50);
+  --accordion-hover-color: var(--blue-800);
+  --accordion-text-color: var(--grey-800);
+  --accordion-toggle-color: var(--grey-500);
+}
+
+.c-accordion {
+  @mixin reset-box;
+  color: var(--accordion-text-color);
+  position: relative;
+}
+
+.c-accordion__list { @mixin reset-box; }
+
+.c-accordion__list--top {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.c-accordion__label {
+  background-color: var(--accordion-top-color);
+  color: var(--accordion-text-color);
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0 !important;
+  padding: .5rem 1.5rem;
+  position: relative;
+  text-transform: uppercase;
+  transition: background-color var(--global-duration) ease-out, color var(--global-duration) ease-out;
+  user-select: none;
+
+  &:hover,
+  &:focus { text-decoration: none; }
+
+  &::before {
+    @mixin triangle right, var(--grey-700), 5px;
+    cursor: pointer;
+    left: 10px;
+    position: absolute;
+    top: 13px;
+    transition: transform var(--global-duration) ease-out, border var(--global-duration) ease-out;
+  }
+}
+
+.c-accordion__item {
+  cursor: pointer;
+  position: relative;
+
+  &.is-open {
+    & > .c-accordion__list { @mixin fade-in; }
+
+    & .c-accordion__label::before { transform: rotate(90deg); }
+  }
+}
+
+.c-accordion__list--mid {
+  @mixin fade-out;
+  background-color: var(--accordion-mid-color);
+
+  & .c-accordion__item {
+    min-height: 50px;
+    padding: .5em 1rem;
+
+    &:not(:last-child) { border-bottom: 1px solid var(--grey-300); }
+
+    &.is-active,
+    &:hover,
+    &:focus {
+      background-color: var(--blue-100);
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, .5);
+
+      & .c-accordion__action { @mixin fade-in; }
+    }
+  }
+}
+
+.c-accordion__list--bottom {
+  @mixin fade-out;
+  background-color: var(--accordion-bottom-color);
+}
+
+.c-accordion__title {
+  @mixin ellipsis;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 0;
+  text-transform: uppercase;
+  width: 14em;
+}
+
+.c-accordion__action {
+  @mixin fade-out;
+  background-color: var(--green-700);
+  color: contrast(var(--green-700));
+  cursor: pointer;
+  font-size: 20px;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 1px;
+  width: 50px;
+
+  &:hover,
+  &:focus { background-color: var(--green-600); }
+}
+
+.c-accordion__toggle {
+  background-color: var(--accordion-toggle-color);
+  display: block;
+  height: 24px;
+  position: relative;
+
+  &::after {
+    position: absolute;
+    top: 7px;
+  }
+
+  .c-accordion--left {
+    border-radius: 0 0 var(--global-rounded) 0;
+
+    &::after {
+      @mixin triangle left, var(--white), 5px;
+      right: 10px;
+    }
+  }
+  
+  .c-accordion--right {
+    border-radius: 0 0 0 var(--global-rounded);
+
+    &::after {
+      @mixin triangle right, var(--white), 5px;
+      left: 10px;
+    }
+  }
+}

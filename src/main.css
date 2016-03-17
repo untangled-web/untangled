@@ -1,0 +1,39 @@
+@import 'utilities/media';
+@import 'utilities/grid';
+@import 'utilities/visibility';
+@import 'utilities/mixins';
+@import 'utilities/positioning';
+
+@import 'elements/colour';
+@import 'elements/layout';
+@import 'elements/size';
+
+@import 'components/button';
+
+.o-page {
+  background-color: #f4f4f4; 
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.o-hero {
+  background-image: linear-gradient(to bottom, rgb(255, 255, 255), rgba(255, 255, 255, 0));
+  padding-top: 1em;
+}
+
+.o-logo {
+  margin-bottom: .5em;
+}
+
+.o-heading-1 {
+  font-size: 3em;
+  font-family: 'Ubuntu Condensed', sans-serif;
+  color: var(--black);
+  margin-bottom: 20px;
+}
+
+.o-heading-2 {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 1.125em;
+  color: rgb(27, 197, 172);
+  margin-bottom: 20px;
+}

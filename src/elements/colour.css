@@ -1,0 +1,100 @@
+:root {
+  --grey-50: #fcfcf9;
+  --grey-100: #eeeee7;
+  --grey-300: #ddddd4;
+  --grey-500: #ccccc2;
+  --grey-600: #a3a396;
+  --grey-700: #77776d;
+  --grey-800: #33332a;
+  --black: #000;
+  --white: #fff;
+
+  --blue-50: #f0faff;
+  --blue-100: #cef;
+  --blue-200: #aaddfa;
+  --blue-300: #94d8ff;
+  --blue-400: #85cce5;
+  --blue-500: #55bee5;
+  --blue-600: #00a0d0;
+  --blue-700: #1c7dab;
+  --blue-800: #047;
+  --blue-900: #0d2c54;
+  --blue-1000: #024;
+  --blue-1100: #002;
+
+  --orange-500: #f92;
+  --orange-600: #f07700;
+  --orange-700: #cc5000;
+
+  --red-50: #fbb;
+  --red-600: #d03000;
+  --red-700: #900;
+  --red-800: #800;
+
+  --gold-50: #feb;
+  --gold-200: #ffd666;
+  --gold-300: #ffc838;
+  --gold-500: #ffba0a;
+  --gold-700: #eeb111;
+
+  --green-50: #b6f5e3;
+  --green-600: #09b081;
+  --green-700: #00996e;
+  --green-800: #007a56;
+
+  --purple-a100: #831dcb;
+  --magenta-500: #d95db7;
+}
+
+/* Type */
+
+:root {
+  --body-copy: var(--grey-800);
+  --message-color-alert: var(--red-600);
+  --message-color-default: var(--blue-700);
+  --message-color-success: var(--green-700);
+  --message-color-warning: var(--gold-700);
+  --placeholder-copy: var(--grey-500);
+}
+
+/* Navigation Colours */
+
+:root {
+  --bar-color: var(--primary-color);
+  --bar-border-color: var(--blue-700);
+  --nav-color: var(--primary-color);
+  --nav-copy: var(--grey-500);
+  --nav-active-color: var(--blue-700);
+  --nav-active-copy: var(--white);
+  --link-color: var(--blue-700);
+  --sidenav-color: var(--blue-50);
+  --sidenav-shadow: 0 0 6px rgba(0, 0, 0, .3);
+}
+
+/* Backgrounds and Borders */
+
+:root {
+  --background-color: var(--grey-50);
+  --shadow-color: rgba(51, 51, 42, .6);
+  --primary-color: rgb(27, 197, 172);
+  --secondary-color: rgb(110, 126, 212);
+  --body-border-color: var(--grey-300);
+
+  --positive-color: var(--green-700);
+  --neutral-color: var(--grey-700);
+  --alterable-color: var(--orange-700);
+  --negative-color: var(--red-600);
+
+  --callout-bg-color: var(--white);
+  --toggle-border-color: var(--grey-600);
+  --iconbar-border-color: var(--grey-300);
+}
+
+/* Highlight */
+
+:root {
+  --highlight-announcement: var(--blue-50);
+  --highlight-error: var(--red-50);
+  --highlight-success: var(--green-50);
+  --highlight-warning: var(--gold-50);
+}

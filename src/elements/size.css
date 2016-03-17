@@ -1,0 +1,55 @@
+/*---
+ title: Size
+ section: Elements
+ ---
+
+ This is a list of global variables, and their default values.
+
+ ###### elements/size.css
+ ```css
+  --global-duration: .1s;
+  --global-margin: 8px;
+  --global-rounded: 4px;
+  --global-font-size: 16px;
+ ```
+
+ #### Container Selectors
+
+ Some of our metric visualizations require some adaptive controls where we would normally utilize container queries. In this case we are not able to utilize the prollyfill for container queries, so instead we are scoping with column classes with what I call "container selectors".
+
+ ```css
+ .o-example {
+
+   &:--container-sm { width: 100px; }
+
+   &:--container-md { width: 200px; }
+
+   &:--container-lg { width: 300px; }
+ }
+ ```
+
+ */
+
+/* stylelint-disable rule-properties-order, function-whitespace-after */
+
+:root {
+  --global-duration: .1s;
+  --global-font-size: 16px;
+  --global-margin: 8px;
+  --global-rounded: 4px;
+  --global-line-height: calc(var(--global--font-size * 2));
+  --global-z-index: 100;
+  --space: 1em;
+}
+
+@custom-selector :--container-sm [class*='column--1'], [class*='column--2'], [class*='column--3'], [class*='column--4'];
+@custom-selector :--container-md [class*='column--5'], [class*='column--6'], [class*='column--7'], [class*='column--8'];
+@custom-selector :--container-lg [class*='column--9'], [class*='column--10'], [class*='column--11'], [class*='column--12'];
+
+@define-mixin leader $lines: 1, $font-size: var(--global-font-size), $property: margin) {
+  $(property): calc(var(--global-line-height) * $lines);
+}
+
+/* stylelint-enable */
+
+.u-leader--none { margin-top: 0 !important; }

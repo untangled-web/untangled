@@ -1,0 +1,15 @@
+/* Stacked Bar Chart */
+
+.o-stacked-bar {
+  max-width: 650px;
+  .domain { fill: var(--white); }
+}
+
+/* Doughnut Chart */
+
+.o-donut-chart,
+.donut-chart {
+  max-height: 150px;
+}
+
+.o-path--1 { fill: var(--grey-300); }

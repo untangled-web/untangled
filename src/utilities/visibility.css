@@ -1,0 +1,137 @@
+/*---
+ section: Utilities
+ title: Visibility
+ ---
+
+Use simple utilities to hide or show elements across any span of devices
+
+### Show
+This set of classes let you expose any element to the desired device(s). Just add one of the following classes and you will see your element on it's respective device.
+
+```example:html
+<div>+ Shown All The Time</div>
+<div class="u-show@tn">+ Shown for Tiny Only</div>
+<div class="u-show@sm">+ Shown for Small Only</div>
+<div class="u-show@md">+ Shown for Medium Only</div>
+<div class="u-show@md-up">+ Shown for Medium Up</div>
+<div class="u-show@lg">+ Shown for Large Only</div>
+<div class="u-show@lg-up">+ Shown for Large Up</div>
+<div class="u-show@landscape">+ Shown for Landscape</div>
+<div class="u-show@portrait">+ Shown for Portrait</div>
+<div class="u-show@reader">+ Read by Screen Readers but Visually Hidden</div>
+```
+
+### Hide
+Use these special classes to hide an element from any device as follows:
+
+```example:html
+<div hidden>- Hidden All The Time via Native Attribute</div>
+<div class="u-hide">- Hidden All The Time</div>
+<div class="u-hide@tn">- Hidden for Tiny Only</div>
+<div class="u-hide@sm">- Hidden for Small Only</div>
+<div class="u-hide@sm-down">- Hidden for Small Down</div>
+<div class="u-hide@md">- Hidden for Medium Only</div>
+<div class="u-hide@md-up">- Hidden for Medium Up</div>
+<div class="u-hide@lg">- Hidden for Large Only</div>
+<div class="u-hide@lg-up">- Hidden for Large Up</div>
+<div class="u-hide@landscape">- Hidden for Landscape</div>
+<div class="u-hide@portrait">- Hidden for Portrait</div>
+<div aria-hidden="true">- Not read by Screen Readers and visually shown</div>
+```
+ */
+
+/* specify the style of visually hidden yet accessible elements */
+
+@define-mixin hide-clip {
+  clip: rect(0 0 0 0);
+  display: inherit;
+  height: 1px;
+  overflow: hidden;
+  position: absolute !important;
+  width: 1px;
+
+  &:focus { clip: auto; }
+}
+
+@define-mixin fade-out {
+  opacity: 0;
+  pointer-events: none;
+  transition: visibility 0s 2s, opacity var(--global-duration) ease-in-out, z-index 0s 2s;
+  visibility: hidden;
+  z-index: -1
+}
+
+@define-mixin fade-in {
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity var(--global-duration) ease-in-out;
+  visibility: visible;
+  z-index: 10;
+}
+
+/* Visibility classes */
+
+.u-hide,
+[hidden] { display: none !important; }
+
+[hidden][aria-hidden='false'],
+.u-show\@reader { @mixin hide-clip; }
+
+@media print {
+  .u-hide\@print { display: none !important; }
+}
+
+@media (--landscape) {
+  .u-hide\@landscape { display: none !important; }
+
+  .u-show\@portrait { display: none !important; }
+}
+
+@media (--portrait) {
+  .u-hide\@portrait { display: none !important; }
+
+  .u-show\@landscape { display: none !important; }
+}
+
+@media (--tn) {
+  .u-hide\@tn { display: none !important; }
+  .u-show\@sm { display: none !important; }
+  .u-show\@sm-up { display: none !important; }
+}
+
+@media (--sm-down) {
+  .u-hide\@sm-down { display: none !important; }
+}
+
+@media (--sm) {
+  .u-hide\@sm { display: none !important; }
+  .u-show\@md { display: none !important; }
+  .u-show\@md-up { display: none !important; }
+}
+
+@media (--sm-up) {
+  .u-show\@tn { display: none !important; }
+}
+
+@media (--md) {
+  .u-hide\@md { display: none !important; }
+}
+
+@media (--md-up) {
+  .u-hide\@md-up { display: none !important; }
+  .u-show\@sm { display: none !important; }
+}
+
+@media (--md-down) {
+  .u-show\@lg { display: none !important; }
+  .u-show\@lg-up { display: none !important; }
+}
+
+@media (--lg) {
+  .u-hide\@lg { display: none !important; }
+}
+
+@media (--lg-up) {
+  .u-hide\@lg-up { display: none !important; }
+  .u-show\@md { display: none !important; }
+}

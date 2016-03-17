@@ -1,0 +1,150 @@
+:root {
+  --input-focus-shadow: 0 0 6px var(--blue-600);
+  --input-font-size: 18px;
+  --input-min-height: 38px;
+}
+
+@define-mixin input-validation $color {
+  border: 1px solid $color;
+  box-shadow: 0 0 6px $color;
+  outline: 0;
+}
+
+@define-mixin input {
+  display: flex;
+  font-family: inherit;
+  font-size: var(--input-font-size);
+  margin: 0 0 16px 0;
+  min-height: var(--input-min-height); /* IE11 Input Height */
+  padding: 2px 4px;
+  width: 100%;
+  background-color: var(--white);
+  border: 1px solid var(--grey-600);
+  border-radius: 4px;
+  color: var(--body-copy);
+  transition: box-shadow var(--global-duration) ease-in-out;
+
+  &:focus,
+  &.has-focus { @mixin input-validation var(--blue-600); }
+
+  &:focus:invalid,
+  &:focus.is-invalid { @mixin input-validation var(--orange-600); }
+
+  &:invalid,
+  &.is-invalid { border: var(--orange-600) 1px solid; }
+
+  &:focus.is-error { @mixin input-validation var(--red-600); }
+
+  &.is-error { border: var(--red-600) 1px solid; }
+
+  & + .o-icon {
+    background-color: var(--white);
+    color: var(--grey-700);
+  }
+}
+
+.c-label {
+  color: var(--black);
+  cursor: pointer;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 4px;
+
+  &.is-optional { font-weight: normal; }
+}
+
+.c-input { @mixin input; }
+
+.c-input--search {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+
+  &::after {
+    content: url('../img/material-icons/ic_search_24px.svg');
+    left: 6px;
+    opacity: .3;
+    position: absolute;
+    top: 7px;
+  }
+
+  /* Chrome 45+, Safari 9+ */
+  .c-input {
+    appearance: textfield;
+    text-indent: 1.5rem;
+
+    /* Chrome 45+, Safari 9+ */
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration { appearance: none; }
+  }
+}
+
+.c-input--mobile-search {
+  @mixin fade-out;
+  position: fixed;
+  top: .5em;
+  left: .5em;
+  right: .5em;
+  width: calc(100% - 1em);
+
+  &.is-open {
+    @mixin fade-in;
+  }
+
+  .c-button--icon {
+    color: var(--grey-700);
+    left: 6px;
+    position: absolute;
+    top: 7px;
+  }
+
+  .c-input {
+    text-indent: 1.75rem;
+  }
+}
+
+.c-input-group {
+  position: relative;
+
+  & .u-right {
+    cursor: pointer;
+    padding: 6px 0;
+    position: absolute;
+    right: 2px;
+    text-align: center;
+    top: 1px;
+    width: 40px;
+  }
+}
+
+.c-field {
+  border-bottom: 2px solid var(--grey-500);
+  color: var(--body-copy);
+  display: flex;
+  font-family: inherit;
+  font-size: var(--input-font-size);
+  margin: 0 0 16px 0;
+  min-height: var(--input-min-height); /* IE11 Input Height */
+  padding: 2px 4px;
+  transition: border var(--global-duration) ease-in-out;
+  width: 100%;
+  &:focus {
+    border-bottom-color: var(--blue-600);
+    outline: none;
+  }
+
+  &--large { font-size: var(--font-size--semi-medium); }
+}
+
+.c-textfield--multi-line {
+  @mixin input;
+  height: auto;
+  outline: none;
+  overflow: auto;
+  resize: vertical;
+}
+
+.o-mobile-search {
+}

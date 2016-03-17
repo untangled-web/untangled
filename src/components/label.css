@@ -1,0 +1,49 @@
+@import 'stylep-badge';
+
+:root {
+  --label-transparent: transparent;
+  --label-grey: var(--grey-500);
+  --label-blue: var(--blue-400);
+  --label-orange: var(--orange-500);
+  --label-green: var(--green-600);
+  --label-red: var(--red-600);
+  --label-purple: var(--magenta-500);
+  --label-magenta: var(--label-purple);
+  --label-orange: var(--orange-500);
+  --label-gold: var(--gold-200);
+}
+
+@define-mixin label $badge-color: grey {
+  @mixin badge-inline;
+  @mixin badge-solid var(--label-$(badge-color)), var(--white), 2px;
+  font-weight: bold;
+  text-transform: uppercase;
+  user-select: none;
+
+  .material-icons { color: var(--white) !important; }
+}
+
+.c-label {
+  @mixin label var(--blue-400);
+
+  &--default {
+    @mixin label transparent;
+    color: var(--body-copy);
+  }
+
+  &--grey { @mixin label grey; }
+
+  &--blue { @mixin label blue; }
+
+  &--orange { @mixin label orange; }
+
+  &--green { @mixin label green; }
+
+  &--red { @mixin label red; }
+
+  &--purple { @mixin label magenta; }
+
+  &--orange { @mixin label orange; }
+
+  &--gold { @mixin label gold; }
+}

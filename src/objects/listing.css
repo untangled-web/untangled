@@ -1,0 +1,228 @@
+/* Listing - Basic */
+
+/*---------------------------------------------
+ |  status  |  item-summary        |  options  |
+ * -------------------------------------------*/
+
+:root {
+  --listing-border: var(--grey-600);
+  --listing-action-color: var(--grey-700);
+  --listing-action-active-color: var(--body-copy);
+}
+
+.o-no-listing {
+  @mixin center;
+  @mixin attach-middle;
+
+  &__hero {
+    color: var(--grey-300);
+    display: inline-block;
+    position: relative;
+
+    .o-icon {
+      height: 128px;
+      width: 128px;
+    }
+
+    &::before {
+      color: var(--white);
+      content: '+';
+      font-size: 75px;
+      font-weight: bold;
+      left: 30px;
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  &__heading {
+    font-weight: normal;
+  }
+
+  &__message {
+    color: var(--grey-700);
+    font-size: 14px;
+  }
+}
+
+.u-column--icons { padding-left: 0 !important; }
+
+.o-listing {
+  @mixin row;
+  background-color: var(--white);
+  border-bottom: 1px solid var(--listing-border);
+  position: relative;
+  transition: background-color .3s ease-in-out, box-shadow .3s ease-in-out;
+  &:first-child {
+    border-top: 1px solid var(--listing-border);
+  }
+
+  &:focus,
+  &.is-active {
+    /* box-shadow: 0 1px 10px rgba(0, 0, 0, .5); */
+    outline: none;
+    z-index: 5;
+  }
+
+  &__status {
+    cursor: pointer;
+    padding: .25em .5rem;
+    width: 40px;
+  }
+
+  &__info {
+    @mixin column 10;
+    @media (--md-up) {
+      @mixin column-pattern;
+    }
+  }
+
+  &__wrapper {
+    @mixin top;
+    @mixin row;
+    cursor: pointer;
+    min-height: 48px;
+    padding: .25em 0;
+  }
+
+  &__general { @mixin column-pattern; }
+  @media (--md-up) {
+    &__general {
+      @mixin column 4;
+    }
+  }
+
+  &__name {
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  &__duration { text-transform: uppercase; }
+  @media (--md-up) {
+    &__duration {
+      @mixin end;
+      @mixin column 4;
+    }
+  }
+
+  &:hover,
+  &.is-active {
+    .o-listing__actions {
+      @mixin fade-in;
+    }
+  }
+
+  &__actions {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    @media (--md-up) { @mixin fade-out; }
+
+    &.is-active {
+      @mixin fade-in;
+    }
+
+    .o-icon {
+      color: var(--listing-action-color);
+      cursor: pointer;
+      transition: color .1s ease-in-out;
+
+      @mixin focus {
+        background-color: var(--white);
+        color: var(--listing-action-active-color);
+      }
+
+      &.is-active,
+      &:active {
+        background-color: var(--grey-300);
+        border-radius: 50px;
+      }
+    }
+  }
+
+  &__action {
+    cursor: pointer;
+    padding: 4px;
+
+    &[disabled] {
+      opacity: .5;
+      user-select: none;
+    }
+
+    .o-icon {
+      margin-right: 4px;
+    }
+  }
+
+  &__menu {
+    max-width: 34px;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__action-group {
+    display: inline-block;
+  }
+  @media (--sm-down) {
+    &__action-group &__action:not(.o-listing__menu) {
+      display: none;
+    }
+  }
+
+  &__menu-group {
+    @mixin end;
+    background-color: var(--white);
+    font-size: 1em;
+    margin-right: .5rem;
+    min-width: 130px;
+    @media (--md-up) { @mixin fade-out; }
+
+    &.is-active { @mixin fade-in; }
+
+    .o-listing__action {
+      display: block;
+      padding: 5px;
+      text-align: left;
+      width: 100%;
+    }
+  }
+
+  &__stats {
+    @mixin center;
+    @mixin column 4;
+    margin: .5em 0;
+
+    .o-label:nth-child(odd) { font-weight: bold; }
+  }
+
+  &__delivery {
+    @mixin column 2;
+  }
+}
+
+/* -- Listing - Detail */
+
+/*---------------------------------------------
+|  status  |  item-detail        |  options  |
+* -------------------------------------------*/
+
+.o-listing__info--detail {
+  .o-listing__menu {
+    padding: 8px !important;
+  }
+
+  .o-listing__heading {
+    border-bottom: 1px solid var(--grey-600);
+    display: inline-block;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    width: 100%;
+    & + ul {
+      font-size: 14px;
+      margin-bottom: .75em;
+    }
+  }
+}

@@ -1,0 +1,112 @@
+:root {
+  --drawer-header-color: var(--primary-color);
+  --drawer-border-color: var(--body-border-color);
+}
+
+.c-drawer {
+  background-color: var(--white);
+  box-shadow: 0 0 5px var(--black);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 85%;
+  z-index: 800;
+}
+
+.c-drawer--left {
+  left: -100%;
+  transition: left .3s ease;
+  &.is-open {
+    left: 0;
+  }
+}
+
+.c-drawer--right {
+  right: -100%;
+  transition: right var(--global-duration) ease-in-out;
+  &.is-open {
+    right: 0;
+  }
+}
+
+.c-drawer__header {
+  background-color: var(--drawer-header-color);
+  color: contrast(var(--drawer-header-color));
+  height: 58px;
+  padding: 0 1em;
+}
+
+.c-drawer__brand {
+  /* stylelint-disable function-url-quotes */
+  background-image: url(var(--brand-logo));
+  /* stylelint-enable */
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: inline-block;
+  height: 48px;
+  margin: .5em 0 0;
+  position: relative;
+  text-indent: -99999em;
+  width: 90px;
+}
+
+.c-drawer__product {
+  display: inline-block;
+  margin: .5em 0 0 1em;
+  font-weight: normal;
+  position: relative;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.c-drawer__group {
+  &:not(:last-child) {
+    border-bottom: var(--drawer-border-color) 1px solid;
+  }
+}
+
+.c-drawer__action {
+  display: inline-block;
+  padding: 1em;
+  transition: background-color var(--global-duration) ease-in-out;
+  text-align: left;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active,
+  &.is-active {
+    background-color: var(--grey-100);
+  }
+
+  .o-icon {
+    color: var(--grey-700);
+    margin-right: .5em;
+  }
+}
+
+.c-drawer__account-avatar .o-icon {
+  height: 50px;
+  width: 50px;
+}
+
+.c-drawer__account-name {
+  font-size: var(--font-size--semi-medium);
+}
+
+.c-drawer__close {
+  @mixin fade-out;
+  background-color: rgba(0, 0, 0, .5);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30 !important;
+
+  .is-open + & {
+    @mixin fade-in;
+  }
+}

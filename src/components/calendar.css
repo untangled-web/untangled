@@ -1,0 +1,97 @@
+@define-mixin calendar {
+  border-radius: var(--global-rounded);
+  display: inline-block;
+  left: 50%;
+  position: absolute !important;
+  top: 45px;
+  transform: translateX(-50%);
+  z-index: 10 !important;
+
+  &.is-active { @mixin fade-in; }
+
+  hr { margin: 1em 0; }
+
+  &__control {
+    @mixin row;
+    @mixin center;
+
+    span {
+      font-size: 20px;
+      margin: 0 .5em;
+    }
+  }
+
+  button { cursor: pointer; }
+
+  &__button {
+    background-color: var(--grey-600);
+    border-radius: 50%;
+    height: 26px;
+    margin-top: 5px;
+    padding: 1px;
+    transition: background-color .3s ease-in-out;
+
+    .material-icons {
+      color: var(--white);
+      vertical-align: top;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: var(--grey-700);
+      outline: none;
+    }
+  }
+
+  &__month {
+    max-width: 350px;
+    table,
+    tr,
+    th,
+    td {
+      border: 0 solid transparent !important;
+      text-align: center !important;
+    }
+
+    tr:first-child td { font-weight: normal; }
+
+    th {
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    th,
+    td { padding: 0 15px !important; }
+
+    td { cursor: pointer; }
+  }
+
+  .o-day {
+    height: 46px;
+    position: relative;
+    transition: color .3s ease-in-out;
+    width: 46px;
+
+    &::after {
+      @mixin fade-out;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    &.is-active::after {
+      @mixin fade-in;
+      border: 2px solid var(--red-600) !important;
+    }
+
+    &.is-inactive { color: var(--grey-600); }
+  }
+}
+
+.o-calendar-container { position: relative; }
+.c-calendar { @mixin calendar; }

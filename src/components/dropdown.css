@@ -1,0 +1,189 @@
+/*---
+ section: Form
+ title: Dropdowns
+ ---
+
+ ```example:html
+ <div class="c-dropdown">
+   <button class="c-dropdown__toggle">Option 1</button>
+   <ul class="c-dropdown__content is-active" id="test-dropdown" tabindex="-1" aria-hidden="true">
+     <li><button>Option 1</button></li>
+     <li><button>Option 2</button></li>
+     <li><button>Option 3</button></li>
+   </ul>
+ </div>
+ ```
+
+ ```example:html
+ <div class="c-dropdown">
+   <button class="c-button">Option 1</button>
+   <ul class="c-dropdown__content is-active" id="test-dropdown" tabindex="-1" aria-hidden="true">
+     <li><button>Option 1</button></li>
+     <li><button>Option 2</button></li>
+     <li><button>Option 3</button></li>
+   </ul>
+ </div>
+ ```
+ */
+
+@import 'stylep-dropdown';
+
+:root {
+  --toggle-height: 38px;
+  --toggle-width: 125px;
+}
+
+@define-mixin toggle {
+  background-color: var(--white);
+  border: 1px solid var(--toggle-border-color);
+  border-radius: var(--global-rounded);
+  color: var(--body-copy);
+  cursor: pointer;
+  display: inline-block;
+  height: var(--toggle-height);
+  position: relative;
+  text-align: left;
+}
+
+@define-mixin dropdown {
+  cursor: pointer;
+  display: inline-block;
+  height: auto;
+  position: relative;
+  z-index: 20;
+
+  &:focus { outline: 0; }
+
+  &__toggle {
+    @mixin toggle;
+    min-width: var(--toggle-width);
+    padding: .5em .5rem;
+    text-decoration: none;
+
+    &::before {
+      @mixin triangle 'bottom', var(--body-copy), 5px;
+      position: absolute;
+      right: .5rem;
+      top: 15px;
+    }
+  }
+
+  &__text-toggle {
+    border: 2px solid transparent;
+    border-radius: var(--global-rounded);
+    color: var(--white);
+    cursor: pointer;
+    font-size: 1.125em;
+    font-weight: 400;
+    margin: 0;
+    padding: 5px 5px 5px 0;
+    text-transform: uppercase;
+    @media (--md-up) {
+      margin: 0 0 0 13px;
+      padding: 5px 13px 5px 0;
+    }
+
+    &:hover,
+    &:focus,
+    &.is-active {
+      background-color: var(--nav-active-color);
+      color: var(--nav-active-copy);
+
+      &::before { border-left-color: var(--nav-active-copy); }
+      .material-icons { color: var(--nav-active-copy); }
+    }
+
+    &.is-active::before { transform: rotate(90deg); }
+
+    &::before {
+      @mixin triangle right, rgba(255,255,255,.5), 4px;
+      margin: -2px 8px 0 14px;
+      transition-duration: .3s;
+    }
+  }
+
+  &__content {
+    @mixin dropdown-solid var(--callout-bg-color), var(--grey-100), rgba(0, 0, 0, .75), 4px, var(--toggle-border-color) 0 0 7px;
+    @mixin card-inline 3px, 0;
+    @mixin fade-out;
+    list-style: none;
+    max-width: inherit;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 2.5em;
+
+    &.is-active { @mixin fade-in; }
+
+    &::before { right: 20px !important; }
+
+    &::after,
+    &:not(.is-active) svg { display: none; }
+
+    .o-icon {
+      color: #444;
+      height: 16px;
+      top: 3px !important;
+      width: 16px;
+    }
+
+    &--overlap {
+      left: 13px !important;
+      top: -3px !important;
+      width: 165px !important;
+    }
+  }
+
+  &__icon {
+    color: var(--primary-color);
+    height: 24px;
+    margin-right: 8px;
+    width: 24px;
+  }
+
+  &__link {
+    font-size: 1.25em;
+    padding: .25em 5px !important;
+    text-transform: uppercase;
+    transition: background-color .3s ease-in-out;
+
+    &[disabled] {
+      box-shadow: none;
+      opacity: .5;
+    }
+
+    &:hover,
+    &:focus { background-color: var(--blue-100); }
+  }
+
+  & .c-button--default {
+    margin-bottom: 0;
+    min-height: 34px;
+    padding: 4px 8px;
+    text-align: left;
+    width: 100%;
+  }
+
+  &__group {
+    border-bottom: 1px solid var(--grey-500);
+  }
+}
+
+select {
+  @mixin toggle;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: normal !important;
+  margin: 0 0 16px 0;
+  width: 100%;
+
+  &::-ms-expand {
+    display: none !important; /* Edge 12+, Internet Explorer 11- */
+  }
+
+  &::-ms-value {
+    color: currentColor; /* Edge 12+, Internet Explorer 11- */
+  }
+}
+
+.c-dropdown { @mixin dropdown; }

@@ -1,0 +1,70 @@
+/* stylelint-disable */
+
+@define-mixin list-item-horizontal $padding: 4px, $direction: left {
+  @mixin no-bullets;
+  white-space: nowrap;
+  /* @mixin float $direction;  */
+  padding-left: $padding;
+  padding-right: $padding;
+  /* todo */
+}
+
+/* Relies on borodean/postcss-assets */
+
+/* @define-mixin image-bullets $icon: resolve($icon), $width: width($icon), $height: height($icon), $line-height: 18px, $padding: 14px {
+  margin-left: 0;
+  li {
+    padding-left: $padding;
+    background: $icon no-repeat ($padding - $width) / 2 ($line-height - $height) / 2;
+    list-style-type: none;
+  }
+} */
+
+@define-mixin triangle $direction, $color: currentColor, $size: 1em {
+  @if $direction == right { border-left: calc($size * 1.5) solid $color; }
+  @if $direction == top { border-bottom: calc($size * 1.5) solid $color; }
+  @if $direction == bottom { border-top: calc($size * 1.5) solid $color; }
+  @if $direction == left { border-right: calc($size * 1.5) solid $color; }
+  @if $direction == top or $direction == bottom {
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+  } @else if $direction == right or $direction == left {
+    border-bottom: $size solid transparent;
+    border-top: $size solid transparent;
+  }
+  content: '';
+  display: inline-block;
+  height: 0;
+  width: 0;
+  z-index: 2;
+}
+
+/* http://blog.teamtreehouse.com/css-tip-better-rounded-borders */
+@define-mixin curves
+  $curves-border-width: 4px,
+  $curves-radius-size: 1.9 {
+  border-radius: calc($curves-border-width * $curves-radius-size);
+  border-width: $curves-border-width;
+}
+
+@define-mixin focus {
+  &:focus {
+    @mixin-content;
+  }
+
+  @media (--lg-up) {
+    &:hover {
+      @mixin-content;
+    }
+  }
+}
+
+@define-mixin is-active {
+  &:active,
+  &.is-active {
+    @mixin-content;
+  }
+}
+
+/* stylelint-enable */
+

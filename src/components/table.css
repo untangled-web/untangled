@@ -1,0 +1,331 @@
+/*---
+ section: Patterns
+ title: Tables
+ ---
+
+ This is a set of ways to format tables for responsive applications.
+
+ ```example
+   <div class="c-button-group">
+     <button class="c-button c-button--small is-active" aria-label="Swipe View"><i class="material-icons">view_headline</i></button>
+     <button class="c-button c-button--small" aria-label="Toggle View"><i class="material-icons">view_column</i></button>
+     <button class="c-button c-button--small" aria-label="Stacked View"><i class="material-icons">view_stream</i></button>
+   </div>
+   <table class="c-table c-table--toggle">
+     <thead>
+       <tr>
+         <th scope="col"></th>
+         <th scope="col" class="c-table__priority-3">Opens</th>
+         <th scope="col" class="c-table__priority-2">Open %</th>
+         <th scope="col" class="c-table__priority-1">Clicks</th>
+         <th scope="col" class="c-table__priority-4">Click %</th>
+         <th scope="col" class="c-table__priority-5">Booked</th>
+         <th scope="col" class="c-table__priority-6">Attr Rev</th>
+         <th scope="col" class="c-table__priority-6">Bounce %</th>
+         <th scope="col" class="c-table__priority-6">Share %</th>
+         <th scope="col" class="c-table__priority-6">Unsub %</th>
+       </tr>
+     </thead>
+     <tbody>
+
+       <tr>
+         <td>Auto Agent</td>
+         <td class="c-table__priority-3">
+           <span class="c-table__label">Opens</span>
+           <span class="c-table__content">300</span>
+         </td>
+         <td class="c-table__priority-2">
+           <span class="c-table__label">Open %</span>
+           <span class="c-table__content">60</span>
+         </td>
+         <td class="c-table__priority-1">
+           <span class="c-table__label">Clicks</span>
+           <span class="c-table__content">3000</span>
+         </td>
+         <td class="c-table__priority-4">
+           <span class="c-table__label">Click %</span>
+           <span class="c-table__content">32</span>
+         </td>
+         <td class="c-table__priority-5">
+           <span class="c-table__label">Booked</span>
+           <span class="c-table__content">12000</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Attr Rev</span>
+           <span class="c-table__content">32800</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Bounce %</span>
+           <span class="c-table__content">32</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Share %</span>
+           <span class="c-table__content">32</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Unsub %</span>
+           <span class="c-table__content">32</span>
+         </td>
+       </tr>
+
+       <tr>
+         <td>First child entry</td>
+         <td class="c-table__priority-3">
+           <span class="c-table__label">Opens</span>
+           <span class="c-table__content">100</span>
+         </td>
+         <td class="c-table__priority-2">
+           <span class="c-table__label">Open %</span>
+           <span class="c-table__content">54</span>
+         </td>
+         <td class="c-table__priority-1">
+           <span class="c-table__label">Clicks</span>
+           <span class="c-table__content">1200</span>
+         </td>
+         <td class="c-table__priority-4">
+           <span class="c-table__label">Click %</span>
+           <span class="c-table__content">18</span>
+         </td>
+         <td class="c-table__priority-5">
+           <span class="c-table__label">Booked</span>
+           <span class="c-table__content">6000</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Attr Rev</span>
+           <span class="c-table__content">24000</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Bounce %</span>
+           <span class="c-table__content">18</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Share %</span>
+           <span class="c-table__content">18</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Unsub %</span>
+           <span class="c-table__content">18</span>
+         </td>
+       </tr>
+
+       <tr>
+         <td>Second child entry</td>
+         <td class="c-table__priority-3">
+           <span class="c-table__label">Opens</span>
+           <span class="c-table__content">600</span>
+         </td>
+         <td class="c-table__priority-2">
+           <span class="c-table__label">Open %</span>
+           <span class="c-table__content">72</span>
+         </td>
+         <td class="c-table__priority-1">
+           <span class="c-table__label">Clicks</span>
+           <span class="c-table__content">960</span>
+         </td>
+         <td class="c-table__priority-4">
+           <span class="c-table__label">Click %</span>
+           <span class="c-table__content">42</span>
+         </td>
+         <td class="c-table__priority-5">
+           <span class="c-table__label">Booked</span>
+           <span class="c-table__content">3000</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Attr Rev</span>
+           <span class="c-table__content">1200</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Bounce %</span>
+           <span class="c-table__content">42</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Share %</span>
+           <span class="c-table__content">42</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Unsub %</span>
+           <span class="c-table__content">42</span>
+         </td>
+       </tr>
+
+       <tr>
+         <td>Third child entry</td>
+         <td class="c-table__priority-3">
+           <span class="c-table__label">Opens</span>
+           <span class="c-table__content">300</span>
+         </td>
+         <td class="c-table__priority-2">
+           <span class="c-table__label">Open %</span>
+           <span class="c-table__content">60</span>
+         </td>
+         <td class="c-table__priority-1">
+           <span class="c-table__label">Clicks</span>
+           <span class="c-table__content">840</span>
+         </td>
+         <td class="c-table__priority-4">
+           <span class="c-table__label">Click %</span>
+           <span class="c-table__content">32</span>
+         </td>
+         <td class="c-table__priority-5">
+           <span class="c-table__label">Booked</span>
+           <span class="c-table__content">12000</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Attr Rev</span>
+           <span class="c-table__content">30800</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Bounce %</span>
+           <span class="c-table__content">32</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Share %</span>
+           <span class="c-table__content">32</span>
+         </td>
+         <td class="c-table__priority-6">
+           <span class="c-table__label">Unsub %</span>
+           <span class="c-table__content">32</span>
+         </td>
+       </tr>
+     </tbody>
+   </table>
+ ```
+
+ */
+
+:root {
+  --table-border: var(--grey-300);
+}
+
+@define-mixin table {
+  border-bottom: 1px solid var(--table-border);
+  border-collapse: collapse;
+  border-spacing: 0;
+  display: table;
+  empty-cells: show;
+  max-width: 100%;
+  width: 100%;
+
+  tbody {
+    tr:not(:first-child) {
+      border-top: 1px solid var(--table-border);
+
+      th,
+      td { font-weight: normal; }
+    }
+
+    tr td:first-child {
+      @media (--md-up) { max-width: 12em; }
+    }
+
+    tr:first-child {
+      border-bottom: 1px solid var(--black);
+      border-top: 1px solid var(--black);
+
+      th,
+      td { font-weight: bold; }
+    }
+
+    th,
+    td {
+      border-right: 1px solid var(--table-border);
+      padding: 0 5px;
+      @media (--md-up) { text-align: right; }
+
+      &:first-child { text-align: left; }
+    }
+  }
+
+  &__label {
+    color: var(--grey-700);
+    display: none;
+    font-weight: bold;
+    padding: 0 .6em 0 0;
+    width: 30%;
+  }
+
+  &__content { font-weight: normal; }
+}
+
+@define-mixin table-stack {
+  tr {
+    clear: both;
+    display: table-row;
+    @media (--md-up) { display: table-row; }
+  }
+
+  th,
+  td {
+    border-right: none !important;
+    display: block;
+    text-align: left;
+    @media (--md-up) {
+      display: table-cell;
+      margin: 0;
+    }
+  }
+
+  thead {
+    th,
+    td {
+      @media (--sm-down) { display: none; }
+    }
+  }
+
+  tbody {
+    th,
+    td {
+      @media (--sm-down) {
+        clear: left;
+        float: left;
+        width: 100%;
+      }
+    }
+  }
+
+  .c-table__label {
+    display: inline-block;
+    @media (--md-up) { display: none; }
+  }
+
+  .c-table__content { font-size: 24px; }
+}
+
+@define-mixin table-toggle {
+  .c-table__priority-6,
+  .c-table__priority-5,
+  .c-table__priority-4,
+  .c-table__priority-3,
+  .c-table__priority-2,
+  .c-table__priority-1 { display: none; }
+
+  .c-table__priority-1 {
+    @media (min-width: 20em) { display: table-cell; }
+  }
+
+  .c-table__priority-2 {
+    @media (min-width: 30em) { display: table-cell; }
+  }
+
+  .c-table__priority-3 {
+    @media (min-width: 40em) { display: table-cell; }
+  }
+
+  .c-table__priority-4 {
+    @media (min-width: 50em) { display: table-cell; }
+  }
+
+  .c-table__priority-5 {
+    @media (min-width: 60em) { display: table-cell; }
+  }
+
+  .c-table__priority-6 {
+    @media (min-width: 70em) { display: table-cell; }
+  }
+}
+
+.c-table { @mixin table;}
+
+.c-table--stack { @mixin table-stack; }
+
+.c-table--toggle { @mixin table-toggle; }

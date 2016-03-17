@@ -1,0 +1,28 @@
+/*---
+ section: Patterns
+ title: Messages
+ ---
+
+ Use these message classes on text strings to style them for various type treatments.
+
+ ```example:html
+ <div class="c-message">This is a message</div>
+ <div class="c-message--alert">This is an alert message</div>
+ <div class="c-message--success">This is a successful message</div>
+ <div class="c-message--warning">This is a warning message</div>
+ ```
+*/
+
+:root {
+  --message-font-size-default: var(--font-size--semi-small);
+}
+
+@define-mixin message $color: var(--message-color-default), $font-size: var(--message-font-size-default) {
+  color: $color;
+  font-size: $font-size;
+}
+
+.c-message { @mixin message; }
+.c-message--alert { @mixin message var(--message-color-alert); }
+.c-message--success { @mixin message var(--message-color-success); }
+.c-message--warning { @mixin message var(--message-color-warning); }

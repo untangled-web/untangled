@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="155px" height="155px" viewBox="0 0 155 155" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.6.1 (26313) - http://www.bohemiancoding.com/sketch -->
+    <title>new-symbol</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path id="path-1" d="M77.5,154.514066 C120.302068,154.514066 155,119.924915 155,77.2570332 C155,34.589152 120.302068,0 77.5,0 C34.6979319,0 0,34.589152 0,77.2570332 C0,119.924915 34.6979319,154.514066 77.5,154.514066 Z"></path>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-3">
+            <feOffset dx="11" dy="6" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="0" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.7 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="1" dy="5" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="0" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.7 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-5">
+            <feOffset dx="1" dy="4" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="0" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.7 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-6">
+            <feOffset dx="-1" dy="5" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="0" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.7 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Welcome" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Tablet-Portrait" transform="translate(-335.000000, -33.000000)">
+            <g id="Group-4-Copy-15" transform="translate(335.000000, 33.000000)">
+                <g id="new-symbol">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Oval-1" fill="#000000" xlink:href="#path-1"></use>
+                    <g id="Group-3" mask="url(#mask-2)">
+                        <g transform="translate(34.954475, 16.852562)">
+                            <path d="M17.2472737,136.931206 C17.2472737,120.484445 39.9792861,110.391125 63.8791415,72.9086125 C87.7789969,35.4261005 67.18875,6.48263624 67.18875,6.48263624" id="Line-Copy-6" stroke="#FFFFFF" stroke-width="12.1" stroke-linecap="square" fill="none" filter="url(#filter-3)"></path>
+                            <path d="M0.973094991,190.172136 C-6.38733668,148.856549 44.461266,118.974444 58.7748904,85.8124296 C73.0885149,52.6504152 33.7106611,25.2941176 33.7106611,25.2941176" id="Line-Copy-5" stroke="#FFFFFF" stroke-width="12.1" stroke-linecap="square" fill="none" filter="url(#filter-4)" transform="translate(31.078357, 107.733127) scale(-1, 1) translate(-31.078357, -107.733127) "></path>
+                            <path d="M10.4354381,144.191707 C13.1185086,116.382379 20.5263233,107.28248 45.4125705,71.0136076 C70.2988177,34.7447351 47.8473737,7.41960785 47.8473737,7.41960785" id="Line-Copy-4" stroke="#FFFFFF" stroke-width="12.1" stroke-linecap="square" fill="none" filter="url(#filter-5)" transform="translate(33.788561, 75.805657) scale(-1, 1) rotate(6.000000) translate(-33.788561, -75.805657) "></path>
+                            <path d="M31.502723,142.410595 C31.502723,125.963834 80.1093664,104.064533 78.852103,74.8579459 C77.5948396,45.6513593 60.3572951,36.8093726 60.3572951,36.8093726" id="Line" stroke="#FFFFFF" stroke-width="12.1" stroke-linecap="square" fill="none" filter="url(#filter-6)"></path>
+                            <path d="M10.4632226,0.247172281 L16.514678,14.835967 L22.8548624,7.81650572 L10.4632226,0.247172281 Z" id="Path-86" stroke="none" fill="#000000" fill-rule="evenodd"></path>
+                            <path d="M26.9097205,17.9572053 L32.9611759,32.5460001 L39.3013603,25.5265388 L26.9097205,17.9572053 Z" id="Path-86-Copy" stroke="none" fill="#000000" fill-rule="evenodd" transform="translate(33.004625, 25.251603) rotate(25.000000) translate(-33.004625, -25.251603) "></path>
+                            <path d="M46.666631,39.2169455 L62.2352858,44.9248362 L55.0113832,26.9530139 L46.666631,39.2169455 Z" id="Path-88" stroke="none" fill="#000000" fill-rule="evenodd" transform="translate(54.450958, 35.938925) rotate(16.000000) translate(-54.450958, -35.938925) "></path>
+                        </g>
+                    </g>
+                    <path d="M103.806648,14.5930906 L95.9700289,29.3902354 L89.4262261,18.9147418 L103.806648,14.5930906 Z" id="Path-89" fill="#000000" mask="url(#mask-2)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

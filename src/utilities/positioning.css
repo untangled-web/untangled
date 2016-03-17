@@ -1,0 +1,98 @@
+/*---
+ section: Utilities
+ title: Positioning
+ ---
+
+* `u-attach--top`
+* `u-attach--top-right`
+* `u-attach--top-left`
+* `u-attach--bottom`
+* `u-attach--bottom-right`
+* `u-attach--bottom-left`
+* `u-attach--middle`
+
+ */
+
+@define-mixin sticky-footer $height {
+  height: auto !important;
+  height: 100%;
+  margin-bottom: -$height;
+  min-height: 100%;
+
+  &__container { padding: 0 0 $height 0; }
+
+  &__footer { height: $height; }
+}
+
+@define-mixin plank $type: fixed {
+  left: 0;
+  position: $type;
+  right: 0;
+  width: 100%;
+}
+
+@define-mixin sticky-bottom {
+  @mixin plank;
+  bottom: 0;
+}
+
+@define-mixin sticky-top {
+  @mixin plank;
+  top: 0;
+}
+
+@define-mixin attach-top-right {
+  position: fixed !important;
+  right: 0;
+  top: 0;
+}
+
+@define-mixin attach-top-left {
+  left: 0;
+  position: fixed !important;
+  top: 0;
+}
+
+@define-mixin attach-bottom {
+  @mixin plank;
+  bottom: 0;
+}
+
+@define-mixin attach-bottom-right {
+  bottom: 0;
+  position: fixed !important;
+  right: 0;
+}
+
+@define-mixin attach-bottom-left {
+  bottom: 0;
+  left: 0;
+  position: fixed !important;
+}
+
+@define-mixin attach-middle {
+  bottom: auto;
+  left: 50%;
+  position: fixed !important;
+  right: auto;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  /* Bug with font-smoothing vs translate */
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
+
+/* Positioning classes */
+
+.u-attach--top { @mixin sticky-top; }
+.u-attach--top-right { @mixin attach-top-right; }
+.u-attach--top-left { @mixin attach-top-left; }
+.u-attach--bottom { @mixin attach-bottom; }
+.u-attach--bottom-right { @mixin attach-bottom-right; }
+.u-attach--bottom-left { @mixin attach-bottom-left; }
+.u-attach--middle { @mixin attach-middle; }

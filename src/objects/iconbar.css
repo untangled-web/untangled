@@ -1,0 +1,70 @@
+.c-iconbar {
+  @mixin sticky-bottom;
+  background-color: var(--white);
+  border-top: 1px solid var(--iconbar-border-color);
+  height: 56px;
+
+  .c-menu__item {
+    background-color: var(--white);
+    color: var(--grey-700);
+    display: inline-block;
+    padding: 0 1em;
+    min-width: 64px;
+    max-width: 96px;
+    transition-duration: var(--global-duration);
+
+    &.is-active {
+      background-color: var(--white);
+      color: var(--primary-color);
+      min-width: 92px;
+      max-width: 168px;
+    }
+  }
+
+  .c-menu__link {
+    @mixin center;
+    color: inherit;
+    font-size: var(--font-size--semi-small);
+    padding: 0;
+    text-align: center;
+  }
+  @media (--md-up) {
+    &__icon { display: none; }
+  }
+
+  &.is-active {
+    background-color: var(--grey-100);
+  }
+}
+
+.c-iconbar__navset {
+  text-align: center
+}
+
+.c-iconbar__icon {
+  display: block;
+  position: relative;
+  top: 9px;
+  transition-duration: var(--global-duration);
+  margin: 6px 0;
+  .is-active & {
+    top: 0;
+  }
+}
+
+.c-iconbar__label {
+  display: block;
+  height: 0;
+  transition-duration: var(--global-duration);
+  @media (--sm-down) {
+    @mixin fade-out;
+  }
+
+  .is-active & {
+    height: auto;
+    @media (--sm-down) {
+      @mixin fade-in;
+      margin-bottom: 10px;
+    }
+  }
+}

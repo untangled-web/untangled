@@ -1,0 +1,55 @@
+/* stylelint-disable rule-properties-order */
+
+:root {
+  --avatar-small: 40px;
+  --avatar-medium: 75px;
+  --avatar-large: 150px;
+  --avatar-xlarge: 250px;
+}
+/* stylelint-enable */
+@define-mixin avatar $size {
+  border-radius: 5px;
+  display: inline-block;
+  height: $size;
+  margin: 5px;
+  width: $size;
+}
+
+.o-avatar {
+  &--default {
+    background-color: var(--grey-300);
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: 30px;
+
+    [src=''] { display: none; }
+  }
+
+  &--small {
+    @mixin avatar var(--avatar-small);
+    @media (--sm-up) { &\@sm { @mixin avatar var(--avatar-small); } }
+    @media (--md-up) { &\@md { @mixin avatar var(--avatar-small); } }
+    @media (--lg-up) { &\@lg { @mixin avatar var(--avatar-small); } }
+  }
+
+  &--medium {
+    @mixin avatar var(--avatar-medium);
+    @media (--sm-up) { &\@sm { @mixin avatar var(--avatar-medium); } }
+    @media (--md-up) { &\@md { @mixin avatar var(--avatar-medium); } }
+    @media (--lg-up) { &\@lg { @mixin avatar var(--avatar-medium); } }
+  }
+
+  &--large {
+    @mixin avatar var(--avatar-large);
+    @media (--sm-up) { &\@sm { @mixin avatar var(--avatar-large); } }
+    @media (--md-up) { &\@md { @mixin avatar var(--avatar-large); } }
+    @media (--lg-up) { &\@lg { @mixin avatar var(--avatar-large); } }
+  }
+
+  &--xlarge {
+    @mixin avatar var(--avatar-xlarge);
+    @media (--sm-up) { &\@sm { @mixin avatar var(--avatar-xlarge); } }
+    @media (--md-up) { &\@md { @mixin avatar var(--avatar-xlarge); } }
+    @media (--lg-up) { &\@lg { @mixin avatar var(--avatar-xlarge); } }
+  }
+}

@@ -1,0 +1,197 @@
+/*---
+ section: Patterns
+ title: Notification
+ ---
+
+ A floating card that communicates a notification message.
+
+ ### States
+
+ Note: This default state gets manual control over what icon is shown.
+
+ ```example:html
+ <div class="c-notification">
+   <i class="c-notification__icon material-icons">info</i>
+   <div class="c-notification__content">
+     <h6>Default Notification</h6>
+     <p>Communicate a meaningful message.</p>
+   </div>
+   <i class="c-notification__cancel material-icons">close</i>
+ </div>
+ ```
+
+ ```example:html
+ <div class="c-notification--success">
+   <i class="c-notification__icon material-icons">check_circle</i>
+   <div class="c-notification__content">
+     <h6>Successful Notification</h6>
+     <p>Communicate a meaningful message.</p>
+   </div>
+   <i class="c-notification__cancel material-icons">close</i>
+ </div>
+ ```
+
+ ```example:html
+ <div class="c-notification--warning">
+   <i class="c-notification__icon material-icons">warning</i>
+   <div class="c-notification__content">
+     <h6>Warning Notification</h6>
+     <p>Communicate a meaningful message.</p>
+   </div>
+   <i class="c-notification__cancel material-icons">close</i>
+ </div>
+ ```
+
+ ```example:html
+ <div class="c-notification--error">
+   <i class="c-notification__icon material-icons">error</i>
+   <div class="c-notification__content">
+     <h6>Error Notification</h6>
+     <p>Communicate a meaningful message.</p>
+   </div>
+   <i class="c-notification__cancel material-icons">close</i>
+ </div>
+ ```
+
+ ### Positions
+
+ You can apply modifier classes to your notification to pin them to different areas around the viewport.
+
+ ###### CLASSES
+
+ ```
+ .c-notification--top-left
+ .c-notification--top
+ .c-notification--top-right
+ .c-notification--bottom-right
+ .c-notification--bottom
+ .c-notification--bottom-left
+ ```
+
+ */
+
+:root {
+  --notification-margin: calc(var(--global-outter-margin) - .5rem);
+  --notification-width: 400px;
+  --notification-color: blue;
+  --notification-success-color: green;
+  --notification-warning-color: gold;
+  --notification-error-color: gold;
+}
+
+@define-mixin notification {
+  @mixin row;
+  padding: .5rem !important;
+  position: relative;
+  text-align: left;
+  transition-duration: var(--global-duration);
+  @media (--md-up) { width: var(--notification-width); }
+}
+
+@define-mixin notification-fixed {
+  margin: 0 auto !important;
+  position: fixed !important;
+  z-index: 200 !important;
+}
+
+.c-notification {
+  @mixin notification;
+  @mixin card;
+}
+
+  /* Positioning */
+
+.c-notification--top {
+  @mixin notification-fixed;
+  border-radius: 0 0 var(--global-rounded) var(--global-rounded);
+  left: var(--notification-margin);
+  right: var(--notification-margin);
+  top: 0;
+}
+
+.c-notification--top-right {
+  @mixin notification-fixed;
+  right: var(--notification-margin);
+  top: var(--notification-margin);
+}
+
+.c-notification--top-left {
+  @mixin notification-fixed;
+  left: var(--notification-margin);
+  top: var(--notification-margin);
+}
+
+.c-notification--bottom {
+  @mixin notification-fixed;
+  border-radius: var(--global-rounded) var(--global-rounded) 0 0;
+  bottom: 0;
+  left: var(--notification-margin);
+  right: var(--notification-margin);
+}
+
+.c-notification--bottom-right {
+  @mixin notification-fixed;
+  bottom: var(--notification-margin);
+  right: var(--notification-margin);
+}
+
+.c-notification--bottom-left {
+  @mixin notification-fixed;
+  bottom: var(--notification-margin);
+  left: var(--notification-margin);
+}
+
+/* States */
+
+.c-notification--success {
+  @mixin notification;
+  @mixin card;
+}
+
+.c-notification--warning {
+  list-style: none;
+  @mixin notification;
+  @mixin card var(--gold-50);
+}
+
+.c-notification--error {
+  @mixin notification;
+  @mixin card var(--gold-50);
+}
+
+.c-notification__content {
+  @mixin column 11;
+  font-size: .9rem;
+  line-height: 1.3;
+}
+
+.c-notification__heading {
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.3;
+  margin-bottom: 2px;
+  margin-top: 5px;
+}
+
+.c-notification__icon {
+  @mixin column 1;
+  color: var(--blue-700);
+  margin-top: .45rem;
+  @media (--md-up) {
+    font-size: 1.5rem;
+    margin-top: .25rem;
+  }
+
+  .c-notification--success & { color: var(--green-700); }
+  .c-notification--warning & { color: var(--orange-600); }
+  .c-notification--error & { color: var(--red-700); }
+}
+
+.c-notification__cancel {
+  color: rgba(0, 0, 0, .35) !important;
+  cursor: pointer;
+  font-size: 1.6rem;
+  position: absolute;
+  right: .5rem;
+  top: .5rem;
+}

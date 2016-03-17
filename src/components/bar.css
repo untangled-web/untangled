@@ -1,0 +1,160 @@
+/*---
+ section: Navigation
+ title: Bar
+ ---
+
+Follow this example of markup on a `<div>` or `<header>` to get an application style top bar.
+
+```example:html
+<header class="c-bar">
+  <nav class="c-bar__nav">
+    <ul class="c-bar__navset">
+      <li class="c-bar__link"><h1 class="o-brand">Title</h1></li>
+      <li class="c-bar__link"><h2 class="o-product">Item</h2></li>
+    </ul>
+  </nav>
+  <nav class="c-bar__nav">
+    <ul class="c-bar__navset">
+      <li class="c-bar__link"><button><i class="material-icons">help</i></button></li>
+    </ul>
+  </nav>
+</header>
+```
+
+ */
+
+:root {
+  --brand-logo: 'img/navis-logo--inverted.svg';
+  --toolbar-height: calc(56px + 1em);
+}
+
+@define-mixin bar $background, $border-color: transparent, $border-width: 0 0 2px {
+  @mixin middle;
+  @mixin row;
+  background-color: $background;
+  color: contrast($background);
+  max-height: 56px;
+  min-height: 56px;
+  padding: 0 1rem;
+  @media (--md-up) {
+    border-color: $border-color;
+    border-style: solid;
+    border-width: $border-width;
+  }
+}
+
+.c-bar {
+  @mixin bar var(--bar-color), var(--bar-border-color);
+
+  &__nav {
+    @mixin column-pattern;
+    padding: .5em 0;
+
+    .o-icon-group li { margin-left: 2%; }
+
+    &:nth-child(even) {
+      @media (--md-up) {
+        .c-bar__navset {
+          @mixin end;
+        }
+        .o-icon-group li {
+          margin-left: 4%;
+        }
+      }
+    }
+
+    &:nth-child(odd) {
+      @media (--md-up) {
+        .c-bar__navset { @mixin start; }
+        .o-icon-group li { margin-right: 4%; }
+      }
+    }
+  }
+
+  &__mnav {
+    width: 35%;
+    @media (--md-up) { width: 50%; }
+
+    button {
+      cursor: pointer;
+    }
+  }
+
+  &__mitem button {
+    padding: 1em .3rem;
+    transition: background-color var(--global-duration) ease-in-out;
+    @media (--md-up) {
+      padding: 1em .5rem;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    @mixin is-active {
+      background-color: var(--nav-active-color);
+      color: var(--nav-active-copy);
+    }
+  }
+
+  &__navset {
+    @mixin middle;
+    display: flex;
+    flex-wrap: wrap;
+    height: 41px;
+    list-style: none;
+  }
+
+  &__view {
+    h1 {
+      font-size: var(--font-size--semi-medium);
+      font-weight: normal;
+      margin: 0 0 0 .5em;
+      white-space: nowrap;
+    }
+  }
+
+  &__link {
+    display: inline-block;
+    position: relative;
+    text-transform: uppercase;
+    vertical-align: middle;
+
+    &--brand {
+      /* stylelint-disable function-url-quotes */
+      background-image: url(var(--brand-logo));
+      /* stylelint-enable */
+      background-repeat: no-repeat;
+      background-size: contain;
+      display: inline-block;
+      height: 48px;
+      margin: 6px 0 0 !important;
+      position: relative;
+      text-indent: -99999em;
+      width: 80px;
+      @media (--md-up) {
+        width: 90px;
+      }
+    }
+  }
+
+  .c-dropdown {
+    @mixin start;
+  }
+}
+
+.c-toolbar {
+  @mixin bar var(--white);
+  box-shadow: 0 0 3px rgba(0, 0, 0, .36);
+  margin: 0 0 1em;
+  padding: 0;
+  z-index: 20;
+
+  .c-button,
+  .c-button--secondary,
+  .c-button-group,
+  .c-input { margin-bottom: 0 !important; }
+}
+@media (--md-up) {
+  .c-toolbar { width: 100%; }
+}

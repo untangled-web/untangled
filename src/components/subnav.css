@@ -1,0 +1,86 @@
+/*---
+ section: Navigation
+ title: Subnav
+ ---
+
+ A horizontal list of options using a `<ul>`.
+
+ #### Horizontal
+
+ ```example:html
+ <ul class="c-subnav--horizontal">
+   <li><a href="#" class="is-active">Link 1</a></li>
+   <li><a href="#">Link 2</a></li>
+   <li><a href="#">Link 3</a></li>
+ </ul>
+ ```
+
+ #### Vertical
+
+ ```example:html
+ <ul class="c-subnav--vertical">
+   <li><a href="#" class="is-active">Link 1</a></li>
+   <li><a href="#">Link 2</a></li>
+   <li><a href="#">Link 3</a></li>
+ </ul>
+ ```
+ */
+
+@define-mixin subnav-active {
+  border-bottom: 3px solid var(--blue-800) !important;
+  box-shadow: none !important;
+  color: var(--blue-800);
+}
+
+@define-mixin subnav {
+  @mixin no-bullets;
+
+  .is-active { @mixin subnav-active; }
+
+  a,
+  button {
+    border-bottom: 3px solid transparent;
+    font-size: 12px;
+    letter-spacing: 1px;
+    min-height: 43px;
+    padding: .5em .5rem;
+    text-transform: uppercase;
+    transition: border-bottom var(--global-duration) ease-in-out;
+
+    @media (--md-up) {
+      padding: .5em .75rem;
+    }
+
+    &:not([class]) { color: var(--grey-700); }
+
+    &:hover,
+    &:focus {
+      border-bottom: 3px solid var(--blue-400);
+      text-decoration: none !important;
+    }
+
+    &:active { @mixin subnav-active; }
+  }
+}
+
+@define-mixin subnav-inline {
+  @mixin list-horizontal;
+  @mixin subnav;
+  @mixin list-inline 0;
+
+  li {
+    display: inline-block;
+  } 
+}
+
+.c-subnav {
+  @mixin subnav;
+
+  &--horizontal { @mixin subnav-inline; }
+
+  &--vertical {
+    @mixin subnav;
+
+    a { display: inline-block; }
+  }
+}

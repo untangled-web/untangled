@@ -1,0 +1,124 @@
+/*---
+ section: Patterns
+ title: Modal
+ ---
+
+ ```example:html
+
+ <div class="c-modal is-active">
+   <div class="c-modal__card [u-attach--middle]">
+     <div class="c-modal__title">
+       <span>Modal Title</span>
+       <button class="o-close">
+         <i class="material-icons">close</i>
+       </button>
+     </div>
+     <div class="c-modal__content u-row u-row--colapse">
+       <p>This is a card in a modal, what will they think of next?</p>
+       <div class="c-modal__actions">
+         <button class="c-button--anchor">Close</button>
+       </div>
+     </div>
+   </div>
+   <div class="c-modal__close"></div>
+ </div>
+ ```
+ */
+
+/* @import 'stylep-modal'; */
+
+@define-mixin modal $titlebar: var(--primary-color), $background: var(--grey-100) {
+  @mixin fade-out;
+  @mixin row;
+  @mixin start;
+  z-index: 500;
+
+  &:target,
+  &.is-active {
+    @mixin fade-in;
+  }
+
+  &__close {
+    @mixin fade-out;
+    background: rgba(0, 0, 0, .6);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 400 !important;
+
+    .is-active & { @mixin fade-in; }
+  }
+
+  &__card {
+    @mixin card $background;
+    min-height: 120px;
+    min-width: 400px;
+    padding: 0;
+    z-index: 450;
+  }
+
+  &__title {
+    background-color: $titlebar;
+    color: var(--white);
+    font-size: var(--font-size--semi-medium);
+    margin-bottom: .5em;
+    margin-top: -1px;
+    padding: .5em 1rem;
+    position: relative;
+
+    .o-close {
+      background-color: transparent;
+      cursor: pointer;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+
+      .o-icon {
+        color: rgba(255, 255, 255, .5);
+        height: 40px;
+        width: 40px;
+      }
+    }
+  }
+
+  &__content {
+    padding: .5em 1rem;
+    > div:not([class]) { @mixin column 12; }
+  }
+
+  &__actions {
+    @mixin column 12;
+    @mixin end;
+  }
+}
+
+.c-modal {
+  @mixin modal;
+
+  &--help {
+    @mixin modal var(--blue-700), var(--white);
+
+    &__title {
+      @mixin row;
+      @mixin middle;
+      border-radius: 4px 4px 0 0;
+
+      .o-icon:first-child { margin-right: 5px; }
+
+      .o-close .o-icon {
+        height: 30px !important;
+        top: .4rem;
+        width: 30px !important;
+      }
+
+      h6 {
+        display: inline-block;
+        margin: 5px 0 !important;
+      }
+    }
+
+    &__card { border-radius: 4px; }
+  }
+}

@@ -1,0 +1,11 @@
+.c-tabs {
+  & [role=tab] {
+    &[aria-selected=false][tabindex='-1'] { text-decoration: none; }
+    &[aria-selected=true][tabindex='0'] { text-decoration: underline; }
+  }
+
+  & [role=tabpanel] {
+    &[aria-hidden=true] { display: none; }
+    &[aria-hidden=false] { display: block; }
+  }
+}

@@ -1,0 +1,82 @@
+@define-mixin icon $size, $color {
+  color: $color !important;
+  font-size: $size !important;
+}
+
+.o-icon {
+  display: inline-block;
+  fill: currentColor;
+  height: 24px;
+  user-select: none;
+  vertical-align: middle;
+  width: 24px;
+
+  &\@sm-down {
+    @media (--md-up) {
+      display: none !important;
+    }
+  }
+
+  &--small {
+    .o-icon {
+      height: 18px;
+      width: 18px;
+    }
+  }
+
+  &--medium {
+    height: 36px;
+    width: 36px;
+  }
+
+  &--large {
+    height: 40px;
+    width: 40px;
+  }
+
+  &--xlarge {
+    height: 65px;
+    width: 65px;
+    margin: 16px 0 0;
+    @media (--md-up) {
+      font-size: 100px !important;
+    }
+  }
+
+  &--account { @mixin icon 50px, var(--grey-500); }
+
+  /* TODO ????!??!? */
+  &--passive { .o-icon { color: var(--grey-600); } }
+
+  &--warning { color: var(--gold-500) !important; }
+
+  &--funky { color: var(--purple-a100) !important; }
+
+  &--info { color: var(--blue-600); }
+
+  &--disabled {
+    color: var(--grey-500);
+    position: relative;
+  }
+
+  &-pill {
+    background-color: var(--grey-500);
+    border-radius: 50px;
+    height: 22px;
+    position: relative;
+    width: calc(21px * 2);
+    z-index: -1;
+
+    & .o-icon:first-child {
+      left: -1px;
+      position: absolute;
+      top: -1px;
+    }
+
+    & .o-icon:last-child {
+      position: absolute;
+      right: -1px;
+      top: -1px;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+/*---
+ title: Menu
+ section: Navigation
+ ---
+
+ ```example:html
+ <div class="c-menu is-active">
+   <ul class="c-menu__menuset>
+     <li class="c-menu__item>
+       <a class="c-menu__link" href="#">Thing 1</a></li>
+     <li class="c-menu__item>
+       <a class="c-menu__link" href="#">Thing 2</a></li>
+   </ul>
+ </div>
+ ```
+
+ */
+
+:root {
+  --menu-color: var(--nav-color);
+  --menu-active-color: var(--nav-active-color);
+  --menu-copy: var(--nav-copy);
+  --menu-active-copy: var(--nav-active-copy);
+}
+
+.c-menu {
+  @mixin no-bullets;
+  @mixin row;
+  @mixin reset-box;
+  background-color: var(--menu-color);
+  color: var(--menu-copy);
+  position: relative;
+}
+
+.c-menu__item {
+  color: var(--menu-copy);
+  transition: background-color var(--global-duration) ease-in-out, color var(--global-duration) ease-in-out;
+
+  &:focus,
+  &:hover,
+  &.is-active {
+    background-color: var(--menu-active-color);
+    color: var(--menu-active-copy);
+  }
+}
+
+.c-menu__link {
+  color: inherit;
+  cursor: pointer;
+  display: block;
+  font-size: 18px;
+  padding: 1em 1.5rem;
+  text-decoration: none;
+}
+
+.c-menu__submenu {
+  background-color: var(--menu-color);
+  color: var(--menu-copy);
+  display: block;
+  min-width: 150px;
+}

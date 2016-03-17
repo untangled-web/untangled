@@ -1,0 +1,57 @@
+/*---
+ section: Objects
+ title: Dropcard
+ ---
+
+ ```example:html
+ <div class="o-dropcard--right is-active">
+   <p>Dropcards are awesome</p>
+ </div>
+ ```
+
+ */
+
+@import 'stylep-dropdown';
+
+@define-mixin dropcard {
+  @mixin dropdown-callout-inline;
+  @mixin dropdown-inline .5em 1em, 0, 289px;
+  @mixin dropdown-solid var(--callout-bg-color), var(--grey-100), rgba(0, 0, 0, .75), 4px, var(--grey-600) 0 0 7px;
+  @mixin dropdown-callout-solid var(--callout-bg-color), 0 0 3px 1px rgba(0, 0, 0, .4);
+  left: 99%;
+  min-width: 310px !important;
+  overflow: visible !important; /* @TODO Bug with stylep-dropdown */
+  position: absolute;
+  top: 11px;
+  z-index: 10;
+
+  &::before { margin-top: -2px !important; }
+
+  div { position: relative; }
+  hr { margin: 0 0 1em; }
+
+  small {
+    color: var(--blue-800);
+    margin-bottom: 2em;
+  }
+
+  .o-hang {
+    display: inline-block;
+    float: right;
+    overflow: hidden;
+    padding-left: 12px;
+    width: 90%;
+  }
+}
+
+/*TODO Refactor this whole thing
+  .o-dropcard--left {
+    @mixin dropcard;
+    @mixin dropdown-callout-right-top;
+  }
+
+  .o-dropcard--right {
+    @mixin dropcard;
+    @mixin dropdown-callout-left-top;
+  }
+*/

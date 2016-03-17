@@ -1,0 +1,75 @@
+/*---
+ title: Syntax
+ section: Utilities
+ ---
+
+Synopsis - Give developers more knowledge about how the classes behave in a non-relative sense: BEM + ITCSS = BEMIT
+
+###### Sources
+
+[More Transparent UI Code with Namespaces](http://csswizardry.com/2015/03/more-transparent-ui-code-with-namespaces/)
+
+[BEMIT: Taking the BEM Naming Convention a Step Further](http://csswizardry.com/2015/08/bemit-taking-the-bem-naming-convention-a-step-further/)
+
+#### Anatomy
+
+```css
+.namespace-block__element--modifier\@media { }
+```
+
+#### Namespaces
+
+|                   |                                              |
+|-------------------|----------------------------------------------|
+| Object            | `.o-object-name[<element>/<modifier>] {}`    |
+| Component         | `.c-component-name[<element>/<modifier>] {}` |
+| Utility           | `.u-utility-name {}` |
+| Theme             | `.t-theme-name {}` |
+| Scope             | `.s-scope-name {}` |
+| State             | `.[is/has]-state {}` |
+| Hack              | `._<namespace>hack-name {}` |
+| Javascript        | `.js-component-name {}` |
+| Quality Assurance | `.qa-node-name {}` |
+
+#### Responsive Suffixes
+
+Breakpoints
+```css
+.o-object-name\@sm {}
+.o-object-name\@md {}
+.o-object-name\@lg {}
+```
+
+Media type
+```css
+.u-utility-name\@print {}
+```
+
+#### BEMIT Healthcheck
+
+Enable a new layer of outlines around everything on the DOM that describes and identifies different types of selectors.
+
+```html
+<html class="t-default s-healthcheck">
+```
+*/
+
+@define-mixin healthcheck {
+  .s-healthcheck {
+    [class] { outline: 5px solid lightgrey; }
+
+    [class*='__'] { outline: 5px solid grey; }
+
+    [class*='--'] { outline: 5px solid darkgrey; }
+
+    [class^='o-'],
+    [class*=' o-'] { outline: 5px solid orange; }
+
+    [class^='c-'],
+    [class*=' c-'] { outline: 5px solid cyan; }
+
+    [class*='@'] { outline: 5px solid rosybrown; }
+
+    [class^='_'] { outline: 5px solid red; }
+  }
+}

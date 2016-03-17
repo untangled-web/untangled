@@ -1,0 +1,58 @@
+@define-mixin badge-inline
+$badge-font-size: 12px,
+$badge-padding: 3px 8px,
+$badge-margin: 0 1% 1% 0 {
+  display: inline-block;
+  font-size: $badge-font-size;
+  line-height: 1;
+  margin: $badge-margin;
+  max-width: 100%;
+  outline: 0;
+  padding: $badge-padding;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+@define-mixin badge-solid
+$badge-color: #555,
+$badge-text-color: #fff,
+$badge-radius: 50px {
+  background: $badge-color;
+  border-radius: $badge-radius;
+  color: $badge-text-color;
+}
+
+@define-mixin badge-hollow
+$badge-color: #555,
+$badge-radius: 50px,
+$badge-border-style: solid,
+$badge-border-width: 1px {
+  border-color: $badge-color;
+  border-radius: $badge-radius;
+  border-style: $badge-border-style;
+  border-width: $badge-border-width;
+  color: $badge-color;
+}
+
+@define-mixin badge-base $badge-color: grey {
+  @mixin badge-inline;
+  @mixin badge-solid $badge-color;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.c-badge { @mixin badge-base var(--blue-600); }
+.c-badge--error { @mixin badge-base var(--red-600); }
+.c-badge--success { @mixin badge-base var(--green-600); }
+.c-badge--warning { @mixin badge-base var(--orange-600); }
+.c-badge--info { @mixin badge-base var(--blue-600); }
+.c-badge--purple { @mixin badge-base var(--magenta-500); }
+.c-badge--yellow { @mixin badge-base var(--gold-700); }
+
+.c-badge--default {
+  @mixin badge-base transparent;
+  color: var(--body-copy);
+}

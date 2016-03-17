@@ -1,0 +1,227 @@
+/*---
+ section: Components
+ title: Toggle
+ ---
+
+ Supported input types are, `text`, `password`, `date`, `datetime`, `datetime-local`, `month`, `week`, `email`, `number`, `search`, `tel`, `time`, `url`, `color`.
+
+ ```example:html
+  <label id='l1' for="input-1-1">Label</label>
+  <input type='text' id="input-1-1" aria-labelledby="l1">
+ ```
+ ```example:html
+  <label id='l2' for="input-1-2">Focus</label>
+  <input type='text' id="input-1-2" class="focus" aria-labelledby="l2">
+ ```
+ ```example:html
+  <div class='c-input-group'>
+   <label id='l3' for="input-2-1">Warning</label>
+   <input type='email' id="input-2-1" value="notauser at clientcom" aria-labelledby="l3" required>
+   <div class='c-validation--warning'>Warning validated message</div>
+  </div>
+ ```
+ ```example:html
+  <div class='c-input-group'>
+   <label id='l4' for="input-2-2">Error</label>
+   <input type='text' id="input-2-2" class="error" aria-labelledby="l4">
+   <div class='c-validation--error' placeholder="Placeholder text">Error validated message</div>
+  </div>
+ ```
+
+ ### Textarea
+ ```example:html
+  <label for='textarea-1-1'>Textarea</label>
+  <textarea id='textarea-1-1'></textarea>
+ ```
+
+ ### Select
+ ```example:html
+  <select>
+   <option>Option 1</option>
+   <option>Option 2</option>
+   <option>Option 3</option>
+  </select>
+ ```
+
+ ### Checkboxes
+
+ This checkbox is rendered based on the Material icon [check box](https://design.google.com/icons/#ic_check_box) and [check box outline blank](https://design.google.com/icons/#ic_check_box_outline_blank).
+
+ ```example:html
+  <input id='c1' type="checkbox" class="c-checkbox" aria-labelledby="c1l"></input>
+  <label for='c1' id="c1l">Checkbox</label>
+
+  <input id='c2' type="checkbox" class="c-checkbox" aria-labelledby="c2l" checked></input>
+  <label for='c2' id="c2l">Checked Checkbox</label>
+ ```
+
+ ### Radio
+
+ This radio control is rendered based on the Material icon [radio button checked](https://design.google.com/icons/#ic_radio_button_checked) and the [radio button unchecked](https://design.google.com/icons/#ic_radio_button_unchecked).
+
+ ```example:html
+  <input id='r1' type="radio" name="radiogroup" class="c-radio" aria-labelledby="r1l"></input>
+  <label for='r1' id="r1l">Radio</label>
+
+  <input id='r2' type="radio" name="radiogroup" class="c-radio" aria-labelledby="r2l" checked></input>
+  <label for='r2' id="r2l">Selected Radio</label>
+ ```
+
+ */
+:root {
+  --toggle-focus-shadow: 0 0 6px var(--blue-600);
+}
+
+@define-mixin material-toggle
+  $passive-color,
+  $passive-icon,
+  $active-color,
+  $active-icon,
+  $margin: .25em {
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  z-index: -1;
+
+  & + label {
+    cursor: pointer;
+    font-weight: normal;
+    line-height: 1em;
+    margin-bottom: 1em;
+    position: relative;
+    text-align: left;
+    vertical-align: top;
+
+    &::before,
+    &::after {
+      direction: ltr;
+      display: inline-block;
+      font-family: 'Material Icons';
+      font-feature-settings: 'liga';
+      font-size: 120%;
+      font-style: normal;
+      font-variant-ligatures: common-ligatures;
+      font-weight: normal;
+      letter-spacing: normal;
+      line-height: 1;
+      margin-right: $margin;
+      text-transform: none;
+      white-space: nowrap;
+      word-wrap: normal;
+    }
+
+    &::before {
+      border-radius: 4px;
+      color: $passive-color;
+      content: $passive-icon;
+    }
+
+    &::after {
+      @mixin fade-out;
+      color: $active-color;
+      content: $active-icon;
+      left: 0;
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  &:checked + label::after { @mixin fade-in; }
+
+  &:focus + label,
+  & + label:active,
+  &:checked + label:active { box-shadow: var(--toggle-focus-shadow); }
+}
+
+.c-checkbox {
+  @mixin material-toggle var(--grey-700), 'check_box_outline_blank', var(--green-600), 'check_box';
+
+  &:indeterminate + label::after {
+    color: var(--grey-700);
+    content: 'check_box_indeterminate';
+  }
+}
+
+.c-radio {
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  z-index: -1;
+
+  & + label {
+    font-weight: normal;
+    position: relative;
+
+    &::before {
+      background-color: var(--white);
+      border: 2px solid var(--grey-700);
+      border-radius: 50px;
+      content: '';
+      display: inline-block;
+      float: left;
+      font-size: 14px;
+      margin-bottom: 0;
+      margin-right: 8px;
+      margin-top: 3px;
+      padding: 6px;
+      position: relative;
+    }
+
+    &::after {
+      @mixin fade-out;
+      background-color: var(--white);
+      border-radius: 50px;
+      content: '';
+      height: 6px;
+      left: 5px;
+      position: absolute;
+      top: 8px;
+      width: 6px;
+      z-index: 5px;
+    }
+  }
+
+  &:focus + label,
+  & + label:active,
+  &:checked + label:active {
+    box-shadow: var(--toggle-focus-shadow);
+  }
+
+  &:checked + label {
+    &::before {
+      background-color: var(--green-600);
+      border: 2px solid var(--green-600);
+      color: #99a1a7;
+    }
+
+    &::after {
+      @mixin fade-in;
+    }
+  }
+}
+
+.c-radio--alt {
+  @mixin material-toggle var(--grey-700), 'radio_button_unchecked', var(--blue-600), 'radio_button_checked';
+
+  & + label {
+    display: inline-block;
+    text-align: center !important;
+
+    &::before,
+    &::after {
+      font-size: 24px !important;
+      margin: 0 .125em .25em !important;
+    }
+
+    &::before {
+      display: block;
+    }
+
+    &::after {
+      left: 0;
+      top: 0;
+    }
+  }
+}

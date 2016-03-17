@@ -1,0 +1,78 @@
+/*
+ title Media
+ section Utilities
+ ---
+
+ Responsive breakpoints for styling for different devices and groups of devices.
+
+ #### Tiny Handhelds
+
+ Only Small Devices `@media (--tn) { }`
+
+ Tiny plus larger devices `@media (--tn-up) { }`
+
+ #### Handhelds
+
+ Only Small Devices `@media (--sm) { }`
+
+ Small plus larger devices `@media (--sm-up) { }`
+
+ Small plus smaller devices `@media (--sm-down) { }`
+
+ #### Tablets
+
+ Only Medium Devices `@media (--md) { }`
+
+ Medium plus larger devices `@media (--md-up) { }`
+
+ Medium plus smaller devices `@media (--md-down) { }`
+
+ #### Laptops
+
+ Only Large Devices `@media (--lg) { }`
+
+ Large plus larger devices `@media (--lg-up) { }`
+
+ Large plus smaller devices `@media (--lg-down) { }`
+
+ #### Desktops
+
+ Only extra large devices `@media (--xl) { }`
+
+ Extra large and larger devices `@media (--xl-up) { }`
+
+ Extra large and smaller devices `@media (--xl-down) { }`
+
+ #### Devices
+
+ Define some styles for print `@media print { }`
+
+ #### Orientation
+
+ Landscape orientation `@media (--landscape) { }`
+
+ Portrait orientation `@media (--portrait) { }`
+
+ #### Classes
+
+ You will also notice some classes are appended with `@tn`, `@sm`, `@md`, `@lg`, and `@print` for the same purposes.
+
+ See [syntax](#syntax)/[responsive-suffixes](#responsive-suffixes) for more info.
+ */
+
+@custom-media --tn-up only screen;
+@custom-media --tn only screen and (max-width: 34em);
+@custom-media --sm-down only screen and (max-width: 48em);
+@custom-media --sm-up only screen and (min-width: 34em);
+@custom-media --sm only screen and (min-width: 34em) and (max-width: 48em);
+@custom-media --md-down only screen and (max-width: 62em);
+@custom-media --md-up only screen and (min-width: 48em);
+@custom-media --md only screen and (min-width: 48em) and (max-width: 62em);
+@custom-media --lg-down only screen and (max-width: 75em);
+@custom-media --lg-up only screen and (min-width: 62em);
+@custom-media --lg only screen and (min-width: 62em) and (max-width: 75em);
+@custom-media --xl-down only screen and (max-width: 90em);
+@custom-media --xl-up only screen and (min-width: 75em);
+@custom-media --xl only screen and (min-width: 75em) and (max-width: 90em);
+@custom-media --landscape only screen and (orientation: landscape);
+@custom-media --portrait only screen and (orientation: portrait);
