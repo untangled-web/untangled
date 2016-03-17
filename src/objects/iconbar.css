@@ -89,7 +89,6 @@
   display: inline-block;
   height: 0;
   transition-duration: var(--global-duration);
-  margin-top: 6px;
 
   .is-active & {
     @mixin fade-in;
@@ -98,6 +97,7 @@
   }
 
   @media (--md-up) {
+    margin-top: 6px;
     .c-iconbar__item:hover & {
       @mixin fade-in;
       height: auto;
