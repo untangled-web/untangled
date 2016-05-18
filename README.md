@@ -8,9 +8,6 @@ pick and choose the pieces you wish to use.
 
 NOTE: THIS IS ALPHA SOFTWARE, BASED UPON ALPHA VERSIONS OF Om. THIS IS NOT READY FOR PRODUCTION.
 
-MORE DOCUMENTATION COMING VERY SOON, including an Untangled Tutorial that rounds out what we started
-with the Om Tutorial.
-
 We're developing this framework as part of our core software stack at NAVIS for production applications. 
 We will not consider this framework stable until Om becomes stable.
 
@@ -58,27 +55,13 @@ that support can diagnose issues by watching what the user saw. Including server
     - Lein task to turn po files into loadable cljs translation modules.
 - Untangled Lein Template (IN PROGRESS: 50%, not deployed to clojars)
     - A full stack sample application 
-- Untangled TodoMVC (IN PROGRESS: 95%)
+- Untangled TodoMVC
     - An implementation of the standard Todo MVC application. 
     - Two versions: One client-only. One with full-stack persistence, optimistic updates, support VCR Viewer.
     
 ## This Repository
 
-This Repository is meant to house a simple demo project and the website files. It is in development, and the project
-that exists is not very impressive (though it does demonstrate a full-stack with initial and lazy loading). A more
-complete project is in the untangled-todomvc repository.
+This Repository is meant to house the website files. 
 
-## Understanding/Using the Code in this Repository
-
-### Configure the web server
-
-The server-side of Untangled requires you have a local web server configuration. There
-will always need to be a default file (already included) that specifies all 
-parameters for the server components. However, the server will not start unless
-you define (and create) a localized configuration file with overrides (which can contain just an
-empty map).
-
-Copy `resources/config/defaults.edn` to `/usr/local/etc/app.edn`.
-
-You'll note that the web server port is the only parameter for this application.
+See untangled-todomvc for a complete project.
 
