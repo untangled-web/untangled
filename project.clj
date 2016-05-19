@@ -8,8 +8,8 @@
                  [com.taoensso/timbre "4.3.1"]
                  [commons-codec "1.10"]
                  [lein-doo "0.1.6" :scope "test"]
-                 [org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.228"]
+                 [org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojurescript "1.8.51"]
                  [org.omcljs/om "1.0.0-alpha31" :exclusions [cljsjs/react]]
                  [navis/untangled-client "0.4.7-SNAPSHOT" :exclusions [cljsjs/react org.omcljs/om]]
                  [navis/untangled-server "0.4.5"]
@@ -115,7 +115,7 @@
                        :aot         :all}
 
              :dev     {:dependencies [[binaryage/devtools "0.5.2"  :exclusions [environ]]
-                                      [figwheel-sidecar "0.5.0-3" :exclusions [ring/ring-core joda-time org.clojure/tools.reader]]
+                                      [figwheel-sidecar "0.5.3-1" :exclusions [ring/ring-core joda-time org.clojure/tools.reader]]
                                       [com.cemerick/piggieback "0.2.1"]
                                       [org.clojure/tools.nrepl "0.2.12"]
                                       [devcards "0.2.1-6" :exclusions [org.omcljs/om]]
