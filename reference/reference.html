@@ -540,6 +540,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_joins">Joins</a></li>
 <li><a href="#_recursion">Recursion</a></li>
 <li><a href="#_unions">Unions</a></li>
+<li><a href="#_query_parameters">Query parameters</a></li>
 </ul>
 </li>
 <li><a href="#_initial_application_state">Initial Application State</a>
@@ -549,7 +550,13 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_using_a_manually_constructed_tree">Using a manually-constructed tree</a></li>
 </ul>
 </li>
-<li><a href="#_mutations">Mutations</a></li>
+<li><a href="#_mutations">Mutations</a>
+<ul class="sectlevel2">
+<li><a href="#_ui_refresh_after_mutation">UI refresh after mutation</a></li>
+</ul>
+</li>
+<li><a href="#_callbacks">Callbacks</a></li>
+<li><a href="#_internationalization">Internationalization</a></li>
 </ul>
 </div>
 </div>
@@ -862,7 +869,7 @@ against the database above will return:</p>
 <p>Joins can be done against reference typed attributes (which essentially means an attribute holding an ident).</p>
 </div>
 <div class="paragraph">
-<p>Joins are written as a map, where the key is the join point, and the value is a sub-query: <code>[{:my-list [:name]}]</code>. If
+<p>Joins are written as a map, where the key is the join point, and the value is a sub-query: <code>[{:my-list [:person/name]}]</code>. If
 the join point is a vector of idents, then it is a to-many join and the query will result in multiple values. If
 the join point is a single ident, then it is a to-one join, and the query will result in a single value. In the
 context of our database above this query should return the names of the people in my list.</p>
@@ -872,39 +879,205 @@ context of our database above this query should return the names of the people i
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="clojure">{ <span class="symbol">:my-list</span> [ {<span class="symbol">:name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Tony</span><span class="delimiter">&quot;</span></span>} {<span class="symbol">:name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Jill</span><span class="delimiter">&quot;</span></span>} ] }</code></pre>
+<pre class="CodeRay highlight"><code data-lang="clojure">{ <span class="symbol">:my-list</span> [ {<span class="symbol">:person/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Tony</span><span class="delimiter">&quot;</span></span>} {<span class="symbol">:person/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Jill</span><span class="delimiter">&quot;</span></span>} ] }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_recursion">Recursion</h3>
-
+<div class="paragraph">
+<p>Queries can be recursive. In the case where the graph has a normal termination point (such as bullet lists) you
+can use <code>&#8230;&#8203;</code> to indicate a recursive join: <code>[{:list [:item/name {:sublist &#8230;&#8203;}]}]</code></p>
+</div>
+<div class="paragraph">
+<p>This would return a nested map that would follow the graph database links and possibly return something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure">{ <span class="symbol">:list</span> { <span class="symbol">:item/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">A</span><span class="delimiter">&quot;</span></span>
+          <span class="symbol">:sublist</span> [ { <span class="symbol">:item/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">A.1</span><span class="delimiter">&quot;</span></span> }
+                     { <span class="symbol">:item/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">A.1</span><span class="delimiter">&quot;</span></span> <span class="symbol">:sublist</span> [ { <span class="symbol">:item/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">A.1.1</span><span class="delimiter">&quot;</span></span> } ]}]}}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In our database from earlier, we have a loop. The query engine will automatically detect loops and stop, but you can manually
+limit the recusion depth using a number instead of <code>&#8230;&#8203;</code>: <code>[{:my-list [:person/name {:person/mate 1}]}]</code>
+which would result in:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure">{ <span class="symbol">:my-list</span> [ { <span class="symbol">:person/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Tony</span><span class="delimiter">&quot;</span></span> <span class="symbol">:person/mate</span> { <span class="symbol">:person/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Jill</span><span class="delimiter">&quot;</span></span> } }
+             { <span class="symbol">:person/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Jill</span><span class="delimiter">&quot;</span></span> <span class="symbol">:person/mate</span> { <span class="symbol">:person/name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Tony</span><span class="delimiter">&quot;</span></span> } } ]}</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_unions">Unions</h3>
-
+<div class="paragraph">
+<p>Union queries are used strictly as the subquery on joins, and are represented by a map. The keys of the map represent
+the possible choices of subquery to run, and the value represents the subquery.</p>
+</div>
+<div class="paragraph">
+<p>In the case of a union query one must realize that it is impossible to say what the query means until you look at the
+actual database. Here is how they work:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Examine the Ident at the join point of the join. Extract the keyword from that ident.</p>
+</li>
+<li>
+<p>Use the ident from (1) to look up the subquery from the union.</p>
+</li>
+<li>
+<p>Continue processing the query using that subquery</p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_union_example">Union Example</h4>
+<div class="paragraph">
+<p>Assume the following simple database:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure">{ <span class="symbol">:things</span> [ [<span class="symbol">:people/by-id</span> <span class="integer">1</span>] [<span class="symbol">:animals/by-id</span> <span class="integer">1</span>] ]
+  <span class="symbol">:people/by-id</span> { <span class="integer">1</span> { <span class="symbol">:id</span> <span class="integer">1</span> <span class="symbol">:type</span> <span class="symbol">:person</span> <span class="symbol">:name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Joe</span><span class="delimiter">&quot;</span></span> } }
+  <span class="symbol">:animals/by-id</span> { <span class="integer">1</span> { <span class="symbol">:id</span> <span class="integer">1</span> <span class="symbol">:type</span> <span class="symbol">:dog</span> <span class="symbol">:breed</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Poodle</span><span class="delimiter">&quot;</span></span> } } }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following query: <code>[{:things { :people/by-id [:type :name]
+                                  :animals/by-id [:type :breed] }}]</code></p>
+</div>
+<div class="paragraph">
+<p>would see the to-many join of <code>:things</code>, and for each element it would select the proper subquery. Resulting in:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure">[ { <span class="symbol">:type</span> <span class="symbol">:person</span> <span class="symbol">:name</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Joe</span><span class="delimiter">&quot;</span></span> }
+  { <span class="symbol">:type</span> <span class="symbol">:dog</span> <span class="symbol">:breed</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Poodle</span><span class="delimiter">&quot;</span></span> } ]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unions work fine on to-one joins exactly the same (returning only one result).</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_query_parameters">Query parameters</h3>
+<div class="paragraph">
+<p>The query language includes support for adding a parameter map to every kind of query element. Untangled does not
+support such parameters on the UI; however, since the same query language is used with respect to the server, it is
+useful to know how to represent them.</p>
+</div>
+<div class="paragraph">
+<p>Basically, you surround the query element with parens, and add a map as the second entry.</p>
+</div>
+<div class="paragraph">
+<p>A property with a parameter: <code>[(:prop { :param 1})]</code>
+A join with a parameter: <code>[({:prop [:a :b]} { :param 1})]</code></p>
+</div>
+<div class="paragraph">
+<p>Again, the the UI cannot make sense of these, but you can write such queries to the server and interpret them there.</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_initial_application_state">Initial Application State</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Building your initial application state can be done in one of three ways. The recommended approach is to co-locate the
+application state on the components that will use it. You may also hand-build either a tree (which can be
+auto-normalized by the UI components into a graph). Finally, you may hand-build a graph database in the format described
+earlier.</p>
+</div>
+<div class="paragraph">
+<p>All three methods should result in a graph database. They are just different approaches at initial input, with different
+pros/cons.</p>
+</div>
+<div class="paragraph">
+<p>In all cases you must ensure that the components have Ident implementations that match up with your graph structure.</p>
+</div>
 <div class="sect2">
 <h3 id="_using_initialappstate">Using InitialAppState</h3>
+<div class="paragraph">
+<p>This is probably the easiest method to code, and the easiest to keep straight during development because the data
+is co-located with the queries and UI bits. The only disadvantage is that you cannot easily initialize parts of the
+graph that do not have a UI representation (which is probably rare).</p>
+</div>
+<div class="paragraph">
+<p>Implement the <code>InitialAppState</code> protocol on your ui components, and compose the initial state together just like you
+do with queries:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="clojure">(defui Child
+  static uc/InitialAppState
+  (initial-state [clz params] { <span class="symbol">:a</span> <span class="integer">1</span> })
+  <span class="keyword">..</span><span class="keyword">.</span>)
 
+(defui Parent
+  static uc/InitialAppState
+  (initial-state [clz params] { <span class="symbol">:x</span> <span class="integer">1</span> <span class="symbol">:child</span> (uc/initial-state Child) })
+  <span class="keyword">..</span><span class="keyword">.</span>)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Compose these all the way to your root component. Untangled will detect state on your root component, and use that
+to construct the initial application database.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_using_a_manually_constructed_graph_db">Using a manually-constructed graph db</h3>
-
+<div class="paragraph">
+<p>Simply create your database in a map, then <strong>wrap it in an atom</strong> and pass that via the <code>:initial-state</code> parameter of
+<code>new-untangled-client</code>. This method is a bit of a hassle to maintain, but allows you to place things in the database
+that are not (yet) in your UI.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_using_a_manually_constructed_tree">Using a manually-constructed tree</h3>
-
+<div class="paragraph">
+<p>Create a tree of data in a map. Pass it (not wrapped in an atom) to <code>:initial-state</code>. This technique is probably the
+least useful. It is no more functional than the <code>InitialAppState</code> method, but is harder to maintain.</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_mutations">Mutations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Untangled uses the abstract top-level transactions modelled by Om to evolve your application state. One should view
+mutations as a function that evolves the state of the database:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="mutations.png" alt="mutations" width="390" height="112">
+</div>
+</div>
+<div class="paragraph">
+<p>Remember that almost everything in your database should be in a table. Mutations run in the context of components (or
+can take parameters), which means that mutations can be given sufficient context (e.g. an ident of the thing to change)
+to be fully abstract. An operation like <code>set-date-to-todate</code> might take the ident of a calendar widget. It need only
+go to that place in the database and change the state there.</p>
+</div>
+<div class="sect2">
+<h3 id="_ui_refresh_after_mutation">UI refresh after mutation</h3>
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_callbacks">Callbacks</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_internationalization">Internationalization</h2>
 <div class="sectionbody">
 
 </div>
@@ -912,7 +1085,7 @@ context of our database above this query should return the names of the people i
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-06-29 14:53:45 PDT
+Last updated 2016-06-29 15:43:07 PDT
 </div>
 </div>
 </body>

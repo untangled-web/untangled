@@ -247,7 +247,7 @@ against the database above will return:
 
 Joins can be done against reference typed attributes (which essentially means an attribute holding an ident).
 
-Joins are written as a map, where the key is the join point, and the value is a sub-query: `[{:my-list [:name]}]`. If
+Joins are written as a map, where the key is the join point, and the value is a sub-query: `[{:my-list [:person/name]}]`. If
 the join point is a vector of idents, then it is a to-many join and the query will result in multiple values. If 
 the join point is a single ident, then it is a to-one join, and the query will result in a single value. In the
 context of our database above this query should return the names of the people in my list.
@@ -256,20 +256,210 @@ The join shown in the prior paragraph against our database above would result in
 
 [source]
 ----
-{ :my-list [ {:name "Tony"} {:name "Jill"} ] }
+{ :my-list [ {:person/name "Tony"} {:person/name "Jill"} ] }
 ----
 
 === Recursion
 
+Queries can be recursive. In the case where the graph has a normal termination point (such as bullet lists) you
+can use `...` to indicate a recursive join: `[{:list [:item/name {:sublist ...}]}]`
+
+This would return a nested map that would follow the graph database links and possibly return something like this:
+
+[source]
+----
+{ :list { :item/name "A"
+          :sublist [ { :item/name "A.1" }
+                     { :item/name "A.1" :sublist [ { :item/name "A.1.1" } ]}]}}
+----
+
+In our database from earlier, we have a loop. The query engine will automatically detect loops and stop, but you can manually
+limit the recusion depth using a number instead of `...`: `[{:my-list [:person/name {:person/mate 1}]}]`
+which would result in:
+
+[source]
+----
+{ :my-list [ { :person/name "Tony" :person/mate { :person/name "Jill" } }
+             { :person/name "Jill" :person/mate { :person/name "Tony" } } ]}
+----
+
 === Unions
+
+Union queries are used strictly as the subquery on joins, and are represented by a map. The keys of the map represent
+the possible choices of subquery to run, and the value represents the subquery.
+
+In the case of a union query one must realize that it is impossible to say what the query means until you look at the
+actual database. Here is how they work:
+
+. Examine the Ident at the join point of the join. Extract the keyword from that ident.
+. Use the ident from (1) to look up the subquery from the union.
+. Continue processing the query using that subquery
+
+==== Union Example
+
+Assume the following simple database:
+
+[source]
+----
+{ :things [ [:people/by-id 1] [:animals/by-id 1] ]
+  :people/by-id { 1 { :id 1 :type :person :name "Joe" } }
+  :animals/by-id { 1 { :id 1 :type :dog :breed "Poodle" } } }
+----
+
+The following query: `[{:things { :people/by-id [:type :name]
+                                  :animals/by-id [:type :breed] }}]`
+
+would see the to-many join of `:things`, and for each element it would select the proper subquery. Resulting in:
+
+[source]
+----
+[ { :type :person :name "Joe" }
+  { :type :dog :breed "Poodle" } ]
+----
+
+Unions work fine on to-one joins exactly the same (returning only one result).
+
+=== Query parameters
+
+The query language includes support for adding a parameter map to every kind of query element. Untangled does not
+support such parameters on the UI; however, since the same query language is used with respect to the server, it is 
+useful to know how to represent them.
+
+Basically, you surround the query element with parens, and add a map as the second entry.
+
+A property with a parameter: `[(:prop { :param 1})]`
+A join with a parameter: `[({:prop [:a :b]} { :param 1})]`
+
+Again, the the UI cannot make sense of these, but you can write such queries to the server and interpret them there.
 
 == Initial Application State
 
+Building your initial application state can be done in one of three ways. The recommended approach is to co-locate the
+application state on the components that will use it. You may also hand-build either a tree (which can be
+auto-normalized by the UI components into a graph). Finally, you may hand-build a graph database in the format described
+earlier. 
+
+All three methods should result in a graph database. They are just different approaches at initial input, with different
+pros/cons.
+
+In all cases you must ensure that the components have Ident implementations that match up with your graph structure.
+
 === Using InitialAppState
+
+This is probably the easiest method to code, and the easiest to keep straight during development because the data
+is co-located with the queries and UI bits. The only disadvantage is that you cannot easily initialize parts of the
+graph that do not have a UI representation (which is probably rare).
+
+Implement the `InitialAppState` protocol on your ui components, and compose the initial state together just like you
+do with queries:
+
+[source]
+----
+(defui Child
+  static uc/InitialAppState
+  (initial-state [clz params] { :a 1 })
+  ...)
+
+(defui Parent
+  static uc/InitialAppState
+  (initial-state [clz params] { :x 1 :child (uc/initial-state Child) })
+  ...)
+----
+
+Compose these all the way to your root component. Untangled will detect state on your root component, and use that
+to construct the initial application database.
 
 === Using a manually-constructed graph db
 
+Simply create your database in a map, then *wrap it in an atom* and pass that via the `:initial-state` parameter of
+`new-untangled-client`. This method is a bit of a hassle to maintain, but allows you to place things in the database
+that are not (yet) in your UI.
+
 === Using a manually-constructed tree
+
+Create a tree of data in a map. Pass it (not wrapped in an atom) to `:initial-state`. This technique is probably the
+least useful. It is no more functional than the `InitialAppState` method, but is harder to maintain.
 
 == Mutations
 
+Untangled uses the abstract top-level transactions modelled by Om to evolve your application state. One should view
+mutations as a function that evolves the state of the database:
+
+[ditaa,target=mutations]
+....
+   /-----\                  /-----\
+   | DB  |                  | DB' |
+   |     |-----mutation---->|     |
+   \-----/                  \-----/
+....
+
+Remember that almost everything in your database should be in a table. Mutations run in the context of components (or
+can take parameters), which means that mutations can be given sufficient context (e.g. an ident of the thing to change)
+to be fully abstract. An operation like `set-date-to-todate` might take the ident of a calendar widget. It need only
+go to that place in the database and change the state there.
+
+=== Built-in mutations
+
+The following functions are built in (in `untangled.client.mutations`), and should generally only be used in the context of UI state changes (e.g.
+folding, checkbox toggle, etc.). They invoke an internal transaction.
+
+WARNING: You should not use these for bit-twiddling your real state! Define your own top-level abstract transactions.
+These functions are really meant as convenience when dealing with controlled form inputs whose state is in your app
+state.
+
+- `(set-string! component field [event|value])`
+- `(set-integer! field [event|value])`
+- `(set-value! component field value)`
+- `(toggle! component field)`
+
+The first two take a value or event via a named parameter. For example `(m/set-string! this :name :event evt)` where
+`evt` is a javascript input field event will extra the input's value and store it in the app db on the correct table
+entry. These functions are really meant for working with form field state stored in the app database (as opposed to
+component local state in uncontrolled form inputs).
+
+=== Custom mutations
+
+Untangled provides a multimethod that you can hook your own mutations into.
+
+[source]
+----
+(ns app.mutations
+  (:require [untangled.client.mutations :as m]))
+
+(defmethod m/mutate 'my/mutation-symbol [env k params] 
+   { :action (fn[] ...) })
+----
+
+The three parameters are:
+
+. `env`: The mutation environment. This is a map that contains:
+-- `state`: The current app database atom. Use `swap!` to modify it
+-- `ref`: The ident of the component that invoked the transaction
+. `k`: This is the symbol, which is identical to the multimethod dispatch value (generally ignored)
+. `params`: The parameters passed to the mutation
+
+WARNING: The body should *not* side-effect! It should instead return a map. The map can contain:
+
+- `:action`: A lambda function to run that will actually do the side-effects
+- One or more remote indicators. Typically something like `:remote true`. See the section on remote mutations.
+
+=== Invoking a mutation (`transact!`)
+
+The `om/transact!` function is used to run a top-level transaction, and can invoke any number of mutations (in order).
+It must be given a component reference or reconciler (typically the former) and a transaction to run. This looks just
+like the query notation, but looks to include method calls (which will invoke the multimetod by symbol):
+
+[source]
+----
+(om/transact! this '[(my/mutation-symbol {:x 1}) (other/mutations)])
+----
+
+
+
+=== Post mutation hooks
+
+=== UI refresh after mutation
+
+== Callbacks
+
+== Internationalization
