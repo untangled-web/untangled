@@ -369,6 +369,11 @@ do with queries:
 Compose these all the way to your root component. Untangled will detect state on your root component, and use that
 to construct the initial application database.
 
+==== Unions and InitialAppState
+
+To-one unions (e.g. used in tabbed interfaces) are automatically resolved if the branches of the union all define
+InitialAppState implementations. The union component InitialAppState should define the "default" branch of the union.
+
 === Using a manually-constructed graph db
 
 Simply create your database in a map, then *wrap it in an atom* and pass that via the `:initial-state` parameter of
@@ -454,12 +459,67 @@ like the query notation, but looks to include method calls (which will invoke th
 (om/transact! this '[(my/mutation-symbol {:x 1}) (other/mutations)])
 ----
 
-
+The mutations in a transaction will run in order. Any of them that indicate a remote nature will be sent across the
+wire to the server.
 
 === Post mutation hooks
 
 === UI refresh after mutation
 
-== Callbacks
+== Untangled Server
+
+=== Overall Network Plumbing
+
+=== Implementing server queries
+
+=== Initial Data Loading
+
+=== On-demand Loading
+
+=== Implementing server mutations
+
+- tempid remaps
+
+=== Server reads (after mutation)
+
+==== Loading markers
+
+=== Incoming Data Merge
+
+==== UI attribute elision
+
+==== Attribute "stomping"
+
+=== Using `merge-state!`
+
+=== Handling network errors
+
+== Untangled Spec
+
+=== Specification Layout
+
+=== Assertions and arrows
+
+=== Mocking
+
+- Verify is automatic (use =2x=> to indicate an exact number of runs, where 2 can be any number)
+- Left hand side is capture, right hand side can have assertions
+
+Mention gotchas:
+
+- Cannot mock inline or macros
+- Mocking internals of Om can cause the browser-based spec renderer to fail. Recommend not doing it.
+
+== Datomic
+
+=== Injecting and configuring database(s)
+
+=== Schema support
+
+=== Migrations
+
+=== Validated transactions (EXPERIMENTAL)
+
+== Websockets
 
 == Internationalization
