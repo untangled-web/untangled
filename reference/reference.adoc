@@ -466,6 +466,30 @@ wire to the server.
 
 === UI refresh after mutation
 
+Untangled uses Om to manage the UI, and as such the UI refresh story is Om's story. The basic 
+rule is that when you `transact!`, the component (subtree) used for the transaction will be refreshed in the UI. This
+allows you to automatically handle a lot of UI updates without having to think much; however, there are a couple of 
+general rules and tools you can use when this alone is insufficient.
+
+. Move the transaction to a parent, and pass a callback that invokes (the parent's) transaction in the child. This
+technique composes well (the parent has to know about the child, but the child need only support the abstract idea
+of providing a callback hook). This is the most common technique in list management, where a child might have a delete
+button, but the delete really needs to happen on the parent's list.
+. Use follow-in reads
+
+==== Follow-on Reads
+
+The name "follow-on reads" is meant to describe the abstract way of refreshing the UI without thinking specifically
+about the UI. A follow-on read is a way to indicate what (typically derived) data should be re-read from your
+application database after a mutation. For example, if you have a friend list and you add someone to it, you might
+need to re-read the count of friends for some indicator somewhere else on the screen. It is easy to reason about
+the concept that the mutation `add-friend` affects the database value `:friend-count` (which you can explicitly store
+as a denormalized value after each mutation, or derive in the UI by pulling in the list of friends and counting them).
+
+Independent of how you store data in your database, you know what you've changed in a mutation. So, when you run
+a mutation you can indicate that you'd like the parts of the UI that *ask* for those other bits of data to refresh.
+
+
 == Untangled Server
 
 === Overall Network Plumbing
