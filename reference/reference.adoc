@@ -490,31 +490,132 @@ Independent of how you store data in your database, you know what you've changed
 a mutation you can indicate that you'd like the parts of the UI that *ask* for those other bits of data to refresh.
 
 
-== Untangled Server
+== Untangled Server and Full Stack Integration
+
+The Untangled server library provides a full-stack development experience for Untangled Web applications. When combined
+with the client library, you get a number of base features that are useful for most applications:
+
+- An easy-to-use pluggable architecture for adding in databases and other components
+- A clear way to add read/write semantics for handling Untangled queries and mutations
+- Processing pipeline hooks for pre-processing, post-processing, and non-API routes (e.g. file serving)
+- General data compression and file resource cache headers
+
+The overall network plumbing of Untangled includes a number of additional features that assist with some
+common patterns needed by most applications:
+
+- JSON+Transit for API encoding
+- The ability to elide UI-only bits of query when using a general UI query against a server
+- A clean story for app-state merging that includes attribute "stomping" semantics
+- Clear network communication ordering to prevent out-of-order execution reasoning
+- The ability to send queries in parallel when sequential reads are not necessary for clear reasoning (parallel loading)
 
 === Overall Network Plumbing
 
+There are a number of convenient things that the network stack does automatically, as shown in the
+diagram below:
+
+[ditaa,target=plumbing]
+....
+   /-----\            /-----\         /------\
+   |Query|  strip ui  |Queue| Network |API   |
+   |     |----------->|     |-------->|      |---------------------------+
+   \-----/            \-----/         \------/                           |
+                                                                         | Network
+   /-----\                /-----\            /-----\ Mark                | Response
+   |App  | post mutation  |App  | Sweep/remap|App  | Missing + Merge     |
+   |State|<---------------|State|<-----------|State|<--------------------+
+   \-----/                \-----/            \-----/
+....
+
+Strip UI::
+   This stage removes any attributes in the query that are namespaced to `ui`. For example, `:ui/checked`. This
+   allows you to place attributes on a UI component that use the app database for storage (and then query for them) while
+   still being able to easily use that component's query as part of a server query.
+
+Queue::
+   All queries are placed on a queue, and are processed one-at-a-time. There is an option to do queries in parallel and
+   bypass this queue.
+
+API::
+   This is the server-side API you write to process the query.
+
+Mark missing/Merge::
+   This is the first stage of the client response processing. During this phase the query and response are walked. If
+   the response does not contain a value for an attribute that was in the query, then a special `not-found` value is
+   added to the incoming response. This composite value is then deep merged with the application state. This forces
+   anything that has "disappeared" from the server to be marked as `not-found` in the app database.
+
+Sweep::
+   This post-processing stage walks the app database and removes anything that has a value of `not-found`. This is the
+   second half of the mark/sweep of data that has disappeared from the server.
+
+Remap::
+   If the request was a mutation (instead of a query), then the response may contain tempid remaps. This step walks the
+   app database replacing IDs that have been remapped.
+
+Post Mutation::
+   The client API for network queries allows for a user-defined post mutation to run at the end of the chain. This is
+   used to create or update alternate UI views of the recently loaded data, if necessary.
+
 === Implementing server queries
+
+The server-side queries come in a the full EDN send from the client. The Untangled Server code automatically decodes
+this query and passes it to an Om parser that you define. The basics of processing these queries are covered in the
+https://github.com/untangled-web/untangled-tutorial[tutorial].
+
+The primary thing to remember is that server query processing functions (which run inside of a parser)
+should return a map whose only key is `:value` and whose value is the value for that query attribute/fragment.
 
 === Initial Data Loading
 
+Initial data loading can be done in the client by adding a `started-callback` parameter to the construction of the
+client. One or more calls to `load-data` can be used to queue up initial reads from your server, and each of those
+loads can specify `:parallel true` to indicate that the loads are not order dependent (if that is indeed true).
+
 === On-demand Loading
+
+Any event (timeout, user interaction, etc) can be used to trigger additional loads. The typical calls used for this
+are `load-data` and `load-field`. The former is completely general and allows for an arbitrary query. The latter is
+component-centric, and can be used to auto-construct a server query based on the component's ident, fields, and subqueries.
+
+There are a number of examples in the
+https://github.com/untangled-web/untangled-cookbook[Untangled Cookbook].
 
 === Implementing server mutations
 
-- tempid remaps
+Server mutations are coded exactly like client mutations, but their body does whatever server-side operations you care
+to do (instead of mutating a client-focused UI database).
+
+There are a few things to understand when implementing a mutation:
+
+- You must return a map whose main key is `:action` and whose value is a function that will accomplish the change
+   - The function should return a map. If any data came into the mutation from the client as a temporary ID, then
+     the map should contain the key `:tempids` whose value is a map from the incoming tempid to the newly assigned
+     permanent ID.
 
 === Server reads (after mutation)
 
+You may add a server read to a transaction that also contains a mutation. In this case the mutations and reads will be split,
+the mutations will run, then the reads will run (ordered using the network queue). Server reads take the form of an
+`untangled/load` built-in client mutation. See the getting started video about
+https://youtu.be/t49JYB27fv8?list=PLVi9lDx-4C_T_gsmBQ_2gztvk6h_Usw6R&t=1535[server basics at roughly 25:20]
+
 ==== Loading markers
 
-=== Incoming Data Merge
+When an item reaches the tip of networking queue and is pulled off Untangled will replace (unless told not to) the data
+being loaded with a marker that the UI can use to show an alternate representation (e.g. a spinner in place of a table). There
+is also a global loading marker at the top of the application state.
 
-==== UI attribute elision
-
-==== Attribute "stomping"
+Loading markers are covered in this https://youtu.be/t49JYB27fv8[getting started video]
+and the https://github.com/untangled-web/untangled-cookbook[Untangled Cookbook] recipe about lazy loading visual
+indicators.
 
 === Using `merge-state!`
+
+When using things like websocket server push, timeouts, and manual XHR requests (say to a Yahoo data feed) you may have data that you'd like to
+place in your application's state that does not arrive through the normal Untangled processing pipeline. In these cases
+you may use Om's `merge!` function or Untangled's `merge-state!`. The latter does a bit of common work for you if you
+can structure the data in a way that looks like the response to an existing query of a UI component with an ident.
 
 === Handling network errors
 

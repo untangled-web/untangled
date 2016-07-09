@@ -559,7 +559,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_ui_refresh_after_mutation">UI refresh after mutation</a></li>
 </ul>
 </li>
-<li><a href="#_untangled_server">Untangled Server</a>
+<li><a href="#_untangled_server_and_full_stack_integration">Untangled Server and Full Stack Integration</a>
 <ul class="sectlevel2">
 <li><a href="#_overall_network_plumbing">Overall Network Plumbing</a></li>
 <li><a href="#_implementing_server_queries">Implementing server queries</a></li>
@@ -567,7 +567,6 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_on_demand_loading">On-demand Loading</a></li>
 <li><a href="#_implementing_server_mutations">Implementing server mutations</a></li>
 <li><a href="#_server_reads_after_mutation">Server reads (after mutation)</a></li>
-<li><a href="#_incoming_data_merge">Incoming Data Merge</a></li>
 <li><a href="#_using_code_merge_state_code">Using <code>merge-state!</code></a></li>
 <li><a href="#_handling_network_errors">Handling network errors</a></li>
 </ul>
@@ -1222,60 +1221,226 @@ wire to the server.</p>
 </div>
 <div class="sect2">
 <h3 id="_ui_refresh_after_mutation">UI refresh after mutation</h3>
-
+<div class="paragraph">
+<p>Untangled uses Om to manage the UI, and as such the UI refresh story is Om&#8217;s story. The basic
+rule is that when you <code>transact!</code>, the component (subtree) used for the transaction will be refreshed in the UI. This
+allows you to automatically handle a lot of UI updates without having to think much; however, there are a couple of
+general rules and tools you can use when this alone is insufficient.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Move the transaction to a parent, and pass a callback that invokes (the parent&#8217;s) transaction in the child. This
+technique composes well (the parent has to know about the child, but the child need only support the abstract idea
+of providing a callback hook). This is the most common technique in list management, where a child might have a delete
+button, but the delete really needs to happen on the parent&#8217;s list.</p>
+</li>
+<li>
+<p>Use follow-in reads</p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_follow_on_reads">Follow-on Reads</h4>
+<div class="paragraph">
+<p>The name "follow-on reads" is meant to describe the abstract way of refreshing the UI without thinking specifically
+about the UI. A follow-on read is a way to indicate what (typically derived) data should be re-read from your
+application database after a mutation. For example, if you have a friend list and you add someone to it, you might
+need to re-read the count of friends for some indicator somewhere else on the screen. It is easy to reason about
+the concept that the mutation <code>add-friend</code> affects the database value <code>:friend-count</code> (which you can explicitly store
+as a denormalized value after each mutation, or derive in the UI by pulling in the list of friends and counting them).</p>
+</div>
+<div class="paragraph">
+<p>Independent of how you store data in your database, you know what you&#8217;ve changed in a mutation. So, when you run
+a mutation you can indicate that you&#8217;d like the parts of the UI that <strong>ask</strong> for those other bits of data to refresh.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_untangled_server">Untangled Server</h2>
+<h2 id="_untangled_server_and_full_stack_integration">Untangled Server and Full Stack Integration</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_overall_network_plumbing">Overall Network Plumbing</h3>
-
+<div class="paragraph">
+<p>The Untangled server library provides a full-stack development experience for Untangled Web applications. When combined
+with the client library, you get a number of base features that are useful for most applications:</p>
 </div>
-<div class="sect2">
-<h3 id="_implementing_server_queries">Implementing server queries</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_initial_data_loading">Initial Data Loading</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_on_demand_loading">On-demand Loading</h3>
-
-</div>
-<div class="sect2">
-<h3 id="_implementing_server_mutations">Implementing server mutations</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>tempid remaps</p>
+<p>An easy-to-use pluggable architecture for adding in databases and other components</p>
+</li>
+<li>
+<p>A clear way to add read/write semantics for handling Untangled queries and mutations</p>
+</li>
+<li>
+<p>Processing pipeline hooks for pre-processing, post-processing, and non-API routes (e.g. file serving)</p>
+</li>
+<li>
+<p>General data compression and file resource cache headers</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The overall network plumbing of Untangled includes a number of additional features that assist with some
+common patterns needed by most applications:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>JSON+Transit for API encoding</p>
+</li>
+<li>
+<p>The ability to elide UI-only bits of query when using a general UI query against a server</p>
+</li>
+<li>
+<p>A clean story for app-state merging that includes attribute "stomping" semantics</p>
+</li>
+<li>
+<p>Clear network communication ordering to prevent out-of-order execution reasoning</p>
+</li>
+<li>
+<p>The ability to send queries in parallel when sequential reads are not necessary for clear reasoning (parallel loading)</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_overall_network_plumbing">Overall Network Plumbing</h3>
+<div class="paragraph">
+<p>There are a number of convenient things that the network stack does automatically, as shown in the
+diagram below:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="plumbing.png" alt="plumbing" width="870" height="182">
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Strip UI</dt>
+<dd>
+<p>This stage removes any attributes in the query that are namespaced to <code>ui</code>. For example, <code>:ui/checked</code>. This
+allows you to place attributes on a UI component that use the app database for storage (and then query for them) while
+still being able to easily use that component&#8217;s query as part of a server query.</p>
+</dd>
+<dt class="hdlist1">Queue</dt>
+<dd>
+<p>All queries are placed on a queue, and are processed one-at-a-time. There is an option to do queries in parallel and
+bypass this queue.</p>
+</dd>
+<dt class="hdlist1">API</dt>
+<dd>
+<p>This is the server-side API you write to process the query.</p>
+</dd>
+<dt class="hdlist1">Mark missing/Merge</dt>
+<dd>
+<p>This is the first stage of the client response processing. During this phase the query and response are walked. If
+the response does not contain a value for an attribute that was in the query, then a special <code>not-found</code> value is
+added to the incoming response. This composite value is then deep merged with the application state. This forces
+anything that has "disappeared" from the server to be marked as <code>not-found</code> in the app database.</p>
+</dd>
+<dt class="hdlist1">Sweep</dt>
+<dd>
+<p>This post-processing stage walks the app database and removes anything that has a value of <code>not-found</code>. This is the
+second half of the mark/sweep of data that has disappeared from the server.</p>
+</dd>
+<dt class="hdlist1">Remap</dt>
+<dd>
+<p>If the request was a mutation (instead of a query), then the response may contain tempid remaps. This step walks the
+app database replacing IDs that have been remapped.</p>
+</dd>
+<dt class="hdlist1">Post Mutation</dt>
+<dd>
+<p>The client API for network queries allows for a user-defined post mutation to run at the end of the chain. This is
+used to create or update alternate UI views of the recently loaded data, if necessary.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_implementing_server_queries">Implementing server queries</h3>
+<div class="paragraph">
+<p>The server-side queries come in a the full EDN send from the client. The Untangled Server code automatically decodes
+this query and passes it to an Om parser that you define. The basics of processing these queries are covered in the
+<a href="https://github.com/untangled-web/untangled-tutorial">tutorial</a>.</p>
+</div>
+<div class="paragraph">
+<p>The primary thing to remember is that server query processing functions (which run inside of a parser)
+should return a map whose only key is <code>:value</code> and whose value is the value for that query attribute/fragment.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_initial_data_loading">Initial Data Loading</h3>
+<div class="paragraph">
+<p>Initial data loading can be done in the client by adding a <code>started-callback</code> parameter to the construction of the
+client. One or more calls to <code>load-data</code> can be used to queue up initial reads from your server, and each of those
+loads can specify <code>:parallel true</code> to indicate that the loads are not order dependent (if that is indeed true).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_on_demand_loading">On-demand Loading</h3>
+<div class="paragraph">
+<p>Any event (timeout, user interaction, etc) can be used to trigger additional loads. The typical calls used for this
+are <code>load-data</code> and <code>load-field</code>. The former is completely general and allows for an arbitrary query. The latter is
+component-centric, and can be used to auto-construct a server query based on the component&#8217;s ident, fields, and subqueries.</p>
+</div>
+<div class="paragraph">
+<p>There are a number of examples in the
+<a href="https://github.com/untangled-web/untangled-cookbook">Untangled Cookbook</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_implementing_server_mutations">Implementing server mutations</h3>
+<div class="paragraph">
+<p>Server mutations are coded exactly like client mutations, but their body does whatever server-side operations you care
+to do (instead of mutating a client-focused UI database).</p>
+</div>
+<div class="paragraph">
+<p>There are a few things to understand when implementing a mutation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You must return a map whose main key is <code>:action</code> and whose value is a function that will accomplish the change</p>
+</li>
+<li>
+<p>The function should return a map. If any data came into the mutation from the client as a temporary ID, then
+the map should contain the key <code>:tempids</code> whose value is a map from the incoming tempid to the newly assigned
+permanent ID.</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_server_reads_after_mutation">Server reads (after mutation)</h3>
+<div class="paragraph">
+<p>You may add a server read to a transaction that also contains a mutation. In this case the mutations and reads will be split,
+the mutations will run, then the reads will run (ordered using the network queue). Server reads take the form of an
+<code>untangled/load</code> built-in client mutation. See the getting started video about
+<a href="https://youtu.be/t49JYB27fv8?list=PLVi9lDx-4C_T_gsmBQ_2gztvk6h_Usw6R&amp;t=1535">server basics at roughly 25:20</a></p>
+</div>
 <div class="sect3">
 <h4 id="_loading_markers">Loading markers</h4>
-
+<div class="paragraph">
+<p>When an item reaches the tip of networking queue and is pulled off Untangled will replace (unless told not to) the data
+being loaded with a marker that the UI can use to show an alternate representation (e.g. a spinner in place of a table). There
+is also a global loading marker at the top of the application state.</p>
 </div>
+<div class="paragraph">
+<p>Loading markers are covered in this <a href="https://youtu.be/t49JYB27fv8">getting started video</a>
+and the <a href="https://github.com/untangled-web/untangled-cookbook">Untangled Cookbook</a> recipe about lazy loading visual
+indicators.</p>
 </div>
-<div class="sect2">
-<h3 id="_incoming_data_merge">Incoming Data Merge</h3>
-<div class="sect3">
-<h4 id="_ui_attribute_elision">UI attribute elision</h4>
-
-</div>
-<div class="sect3">
-<h4 id="_attribute_stomping">Attribute "stomping"</h4>
-
 </div>
 </div>
 <div class="sect2">
 <h3 id="_using_code_merge_state_code">Using <code>merge-state!</code></h3>
-
+<div class="paragraph">
+<p>When using things like websocket server push, timeouts, and manual XHR requests (say to a Yahoo data feed) you may have data that you&#8217;d like to
+place in your application&#8217;s state that does not arrive through the normal Untangled processing pipeline. In these cases
+you may use Om&#8217;s <code>merge!</code> function or Untangled&#8217;s <code>merge-state!</code>. The latter does a bit of common work for you if you
+can structure the data in a way that looks like the response to an existing query of a UI component with an ident.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_handling_network_errors">Handling network errors</h3>
@@ -1358,7 +1523,7 @@ wire to the server.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-06-29 16:12:04 PDT
+Last updated 2016-07-08 23:17:26 PDT
 </div>
 </div>
 </body>

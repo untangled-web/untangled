@@ -2,3 +2,5 @@ node_modules/
 *sw?
 diag*png*
 .asciidoctor
+.idea
+untangled.iml
