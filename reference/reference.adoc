@@ -462,7 +462,10 @@ like the query notation, but looks to include method calls (which will invoke th
 The mutations in a transaction will run in order. Any of them that indicate a remote nature will be sent across the
 wire to the server.
 
-=== Post mutation hooks
+=== Post mutation hooks (experimental)
+
+The is a multimethod for adding in post-mutation handlers that will run after the main mutation. These can be useful
+when there is a common behavior that should happen after some set of mutations.
 
 === UI refresh after mutation
 
@@ -610,16 +613,48 @@ Loading markers are covered in this https://youtu.be/t49JYB27fv8[getting started
 and the https://github.com/untangled-web/untangled-cookbook[Untangled Cookbook] recipe about lazy loading visual
 indicators.
 
-=== Using `merge-state!`
+=== Out-of-band Data (websocket, timeout, XHR)
 
-When using things like websocket server push, timeouts, and manual XHR requests (say to a Yahoo data feed) you may have data that you'd like to
+When using things like websocket server push, timeouts, and manual XHR requests you may have data that you'd like to
 place in your application's state that does not arrive through the normal Untangled processing pipeline. In these cases
 you may use Om's `merge!` function or Untangled's `merge-state!`. The latter does a bit of common work for you if you
 can structure the data in a way that looks like the response to an existing query of a UI component with an ident.
 
+Basically, you structure the data to be a tree of maps that could exist in the database for a given component (and
+children). The `merge-state!` function will extract the ident from that data, normalize the tree into objects, and
+merge everything into tables.
+
+Any number of named parameters can be given at the same time to add that object's ident to other locations in the
+database.
+
+See the docstring of `merge-state!` and `integrate-ident!` in the `untangled.client.core` namespace.
+
 === Handling network errors
 
+There are several different kinds of errors that can happen when working with a full-stack application:
+
+- Hard network errors (e.g. lost WiFi, server crashed)
+- Unexpected server errors (code threw an unexpected exception)
+- API errors (client made a bad request, server state is out of sync with client, etc.)
+
+Untangled gives you a few mechanisms for dealing with full-stack errors:
+
+- A global handler that can be set when you create a client (see `:network-error-callback` in `new-untangled-client`). This
+is only available if you use the default network implementation. This function will also be called on server
+exceptions, since the default server implementation sends back a hard error.
+- Fallbacks: A fallback is a placeholder in mutations that is called if the mutation transaction fails. It can modify
+the app state in any way it sees fit to represent the handling of the error (e.g. change UI state to show an error
+dialog, reload the page, etc.).
+
 == Untangled Spec
+
+Untangled Spec is built on Clojure/Clojurescript test. The entire API of those libraries works within the body of the
+specification. Untangled spec adds in a few useful features:
+
+- A DSL that reads more like an outline of a runnable specification
+- Clojure and Clojurescript test runners that render the specification results as an outline
+- Easy mocking with script-like semantics, argument capture and verification, and async timeline simulation
+- Midje-like assertion blocks
 
 === Specification Layout
 
@@ -635,16 +670,41 @@ Mention gotchas:
 - Cannot mock inline or macros
 - Mocking internals of Om can cause the browser-based spec renderer to fail. Recommend not doing it.
 
-== Datomic
+== Untangled Datomic
+
+The Untangled Datomic library includes a few useful additions that make it easier to integrate one or more Datomic
+databases as persistent storage:
+
+- A configurable database component
+- Schema and migration support
+- Experimental schema rule enforcement for additional referential integrity checks
 
 === Injecting and configuring database(s)
 
+
 === Schema support
+
+The schema support in Untangled Datomic is a fork of Yuppiechef's Datomic Schema with additions for experimental additional
+schema enforcements.
 
 === Migrations
 
 === Validated transactions (EXPERIMENTAL)
 
+The library comes with a function called `vtransact`. It works just like Datomic's `transact`, but enforces the additional
+schema constraints. This function should be considered experimental. We'd be interested in feedback.
+
 == Websockets
 
+The Untangled Websockets library gives you an alternate network implementation (for client and server) that maintains
+a persistent TCP connection and enables server push. Note that the server continues to support the non-websocket API
+endpoint, which is useful if you want to have multiple client types supported by the same server.
+
 == Internationalization
+
+Untangled client comes with tools to enable full internationalization based on GNU gettext. The main features include:
+
+- Use your native language (e.g. English) as the real strings in the UI. These will also act as the default values
+  should a translation be missing
+- Support for date, time, numeric, and plural formatting.
+- Support for splitting compiled translations into dynamically loadable modules.

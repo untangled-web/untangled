@@ -555,7 +555,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_built_in_mutations">Built-in mutations</a></li>
 <li><a href="#_custom_mutations">Custom mutations</a></li>
 <li><a href="#_invoking_a_mutation_code_transact_code">Invoking a mutation (<code>transact!</code>)</a></li>
-<li><a href="#_post_mutation_hooks">Post mutation hooks</a></li>
+<li><a href="#_post_mutation_hooks_experimental">Post mutation hooks (experimental)</a></li>
 <li><a href="#_ui_refresh_after_mutation">UI refresh after mutation</a></li>
 </ul>
 </li>
@@ -567,7 +567,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_on_demand_loading">On-demand Loading</a></li>
 <li><a href="#_implementing_server_mutations">Implementing server mutations</a></li>
 <li><a href="#_server_reads_after_mutation">Server reads (after mutation)</a></li>
-<li><a href="#_using_code_merge_state_code">Using <code>merge-state!</code></a></li>
+<li><a href="#_out_of_band_data_websocket_timeout_xhr">Out-of-band Data (websocket, timeout, XHR)</a></li>
 <li><a href="#_handling_network_errors">Handling network errors</a></li>
 </ul>
 </li>
@@ -578,7 +578,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_mocking">Mocking</a></li>
 </ul>
 </li>
-<li><a href="#_datomic">Datomic</a>
+<li><a href="#_untangled_datomic">Untangled Datomic</a>
 <ul class="sectlevel2">
 <li><a href="#_injecting_and_configuring_database_s">Injecting and configuring database(s)</a></li>
 <li><a href="#_schema_support">Schema support</a></li>
@@ -1216,8 +1216,11 @@ wire to the server.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_post_mutation_hooks">Post mutation hooks</h3>
-
+<h3 id="_post_mutation_hooks_experimental">Post mutation hooks (experimental)</h3>
+<div class="paragraph">
+<p>The is a multimethod for adding in post-mutation handlers that will run after the main mutation. These can be useful
+when there is a common behavior that should happen after some set of mutations.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_ui_refresh_after_mutation">UI refresh after mutation</h3>
@@ -1434,23 +1437,87 @@ indicators.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_using_code_merge_state_code">Using <code>merge-state!</code></h3>
+<h3 id="_out_of_band_data_websocket_timeout_xhr">Out-of-band Data (websocket, timeout, XHR)</h3>
 <div class="paragraph">
-<p>When using things like websocket server push, timeouts, and manual XHR requests (say to a Yahoo data feed) you may have data that you&#8217;d like to
+<p>When using things like websocket server push, timeouts, and manual XHR requests you may have data that you&#8217;d like to
 place in your application&#8217;s state that does not arrive through the normal Untangled processing pipeline. In these cases
 you may use Om&#8217;s <code>merge!</code> function or Untangled&#8217;s <code>merge-state!</code>. The latter does a bit of common work for you if you
 can structure the data in a way that looks like the response to an existing query of a UI component with an ident.</p>
 </div>
+<div class="paragraph">
+<p>Basically, you structure the data to be a tree of maps that could exist in the database for a given component (and
+children). The <code>merge-state!</code> function will extract the ident from that data, normalize the tree into objects, and
+merge everything into tables.</p>
+</div>
+<div class="paragraph">
+<p>Any number of named parameters can be given at the same time to add that object&#8217;s ident to other locations in the
+database.</p>
+</div>
+<div class="paragraph">
+<p>See the docstring of <code>merge-state!</code> and <code>integrate-ident!</code> in the <code>untangled.client.core</code> namespace.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_handling_network_errors">Handling network errors</h3>
-
+<div class="paragraph">
+<p>There are several different kinds of errors that can happen when working with a full-stack application:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Hard network errors (e.g. lost WiFi, server crashed)</p>
+</li>
+<li>
+<p>Unexpected server errors (code threw an unexpected exception)</p>
+</li>
+<li>
+<p>API errors (client made a bad request, server state is out of sync with client, etc.)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Untangled gives you a few mechanisms for dealing with full-stack errors:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A global handler that can be set when you create a client (see <code>:network-error-callback</code> in <code>new-untangled-client</code>). This
+is only available if you use the default network implementation. This function will also be called on server
+exceptions, since the default server implementation sends back a hard error.</p>
+</li>
+<li>
+<p>Fallbacks: A fallback is a placeholder in mutations that is called if the mutation transaction fails. It can modify
+the app state in any way it sees fit to represent the handling of the error (e.g. change UI state to show an error
+dialog, reload the page, etc.).</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_untangled_spec">Untangled Spec</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Untangled Spec is built on Clojure/Clojurescript test. The entire API of those libraries works within the body of the
+specification. Untangled spec adds in a few useful features:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A DSL that reads more like an outline of a runnable specification</p>
+</li>
+<li>
+<p>Clojure and Clojurescript test runners that render the specification results as an outline</p>
+</li>
+<li>
+<p>Easy mocking with script-like semantics, argument capture and verification, and async timeline simulation</p>
+</li>
+<li>
+<p>Midje-like assertion blocks</p>
+</li>
+</ul>
+</div>
 <div class="sect2">
 <h3 id="_specification_layout">Specification Layout</h3>
 
@@ -1488,15 +1555,35 @@ can structure the data in a way that looks like the response to an existing quer
 </div>
 </div>
 <div class="sect1">
-<h2 id="_datomic">Datomic</h2>
+<h2 id="_untangled_datomic">Untangled Datomic</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The Untangled Datomic library includes a few useful additions that make it easier to integrate one or more Datomic
+databases as persistent storage:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A configurable database component</p>
+</li>
+<li>
+<p>Schema and migration support</p>
+</li>
+<li>
+<p>Experimental schema rule enforcement for additional referential integrity checks</p>
+</li>
+</ul>
+</div>
 <div class="sect2">
 <h3 id="_injecting_and_configuring_database_s">Injecting and configuring database(s)</h3>
 
 </div>
 <div class="sect2">
 <h3 id="_schema_support">Schema support</h3>
-
+<div class="paragraph">
+<p>The schema support in Untangled Datomic is a fork of Yuppiechef&#8217;s Datomic Schema with additions for experimental additional
+schema enforcements.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_migrations">Migrations</h3>
@@ -1504,26 +1591,49 @@ can structure the data in a way that looks like the response to an existing quer
 </div>
 <div class="sect2">
 <h3 id="_validated_transactions_experimental">Validated transactions (EXPERIMENTAL)</h3>
-
+<div class="paragraph">
+<p>The library comes with a function called <code>vtransact</code>. It works just like Datomic&#8217;s <code>transact</code>, but enforces the additional
+schema constraints. This function should be considered experimental. We&#8217;d be interested in feedback.</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_websockets">Websockets</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>The Untangled Websockets library gives you an alternate network implementation (for client and server) that maintains
+a persistent TCP connection and enables server push. Note that the server continues to support the non-websocket API
+endpoint, which is useful if you want to have multiple client types supported by the same server.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_internationalization">Internationalization</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>Untangled client comes with tools to enable full internationalization based on GNU gettext. The main features include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use your native language (e.g. English) as the real strings in the UI. These will also act as the default values
+should a translation be missing</p>
+</li>
+<li>
+<p>Support for date, time, numeric, and plural formatting.</p>
+</li>
+<li>
+<p>Support for splitting compiled translations into dynamically loadable modules.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-07-08 23:17:26 PDT
+Last updated 2016-07-09 20:43:45 PDT
 </div>
 </div>
 </body>
