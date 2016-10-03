@@ -519,14 +519,16 @@ diagram below:
 
 [ditaa,target=plumbing]
 ....
-   /-----\            /-----\         /------\
-   |Query|  strip ui  |Queue| Network |API   |
-   |     |----------->|     |-------->|      |---------------------------+
-   \-----/            \-----/         \------/                           |
-                                                                         | Network
-   /-----\                /-----\            /-----\ Mark                | Response
-   |App  | post mutation  |App  | Sweep/remap|App  | Missing + Merge     |
-   |State|<---------------|State|<-----------|State|<--------------------+
+   /-----\            /-----\
+   |Query|  strip ui  |Queue|                                          Network Request
+   |     |----------->|     |---------------------------------------------------------->---+
+   \-----/            \-----/                                                              |
+                                                                                        /------\
+                                                                                        |API   |
+                                                                                        |      |
+   /-----\                /-----\            /-----\ Mark                               \------/
+   |App  | post mutation  |App  | Sweep/remap|App  | Missing + Merge  Network Response     |
+   |State|<---------------|State|<-----------|State|<---------------------------------<----+
    \-----/                \-----/            \-----/
 ....
 
@@ -544,12 +546,12 @@ API::
 
 Mark missing/Merge::
    This is the first stage of the client response processing. During this phase the query and response are walked. If
-   the response does not contain a value for an attribute that was in the query, then a special `not-found` value is
+   the response does not contain a value for an attribute that was in the query, then a special `:not-found` value is
    added to the incoming response. This composite value is then deep merged with the application state. This forces
-   anything that has "disappeared" from the server to be marked as `not-found` in the app database.
+   anything that has "disappeared" from the server to be marked as `:not-found` in the app database.
 
 Sweep::
-   This post-processing stage walks the app database and removes anything that has a value of `not-found`. This is the
+   This post-processing stage walks the app database and removes anything that has a value of `:not-found`. This is the
    second half of the mark/sweep of data that has disappeared from the server.
 
 Remap::
@@ -572,14 +574,25 @@ should return a map whose only key is `:value` and whose value is the value for 
 === Initial Data Loading
 
 Initial data loading can be done in the client by adding a `started-callback` parameter to the construction of the
-client. One or more calls to `load-data` can be used to queue up initial reads from your server, and each of those
-loads can specify `:parallel true` to indicate that the loads are not order dependent (if that is indeed true).
+client. One or more calls to `untangled.client.data-fetch/load-data` can be used to queue up initial reads from your
+server, and each of those loads can specify `:parallel true` to indicate that the loads are not order dependent
+(if that is indeed true).
+
+[source,clojure]
+----
+(untangled.client.core/new-untangled-client
+  :network-error-callback handle-network-error
+  :started-callback       (fn [{:keys [reconciler]}]
+                            (om.next/transact! reconciler '[(app/remote-load)])
+                            (untangled.client.data-fetch/load-data reconciler [:data/to-fetch] :parallel true)))
+----
 
 === On-demand Loading
 
 Any event (timeout, user interaction, etc) can be used to trigger additional loads. The typical calls used for this
-are `load-data` and `load-field`. The former is completely general and allows for an arbitrary query. The latter is
-component-centric, and can be used to auto-construct a server query based on the component's ident, fields, and subqueries.
+are `untangled.client.data-fetch/load-data` and `untangled.client.data-fetch/load-field`. The former is completely general
+and allows for an arbitrary query. The latter is component-centric, and can be used to auto-construct a server query
+based on the component's ident, fields, and sub-queries.
 
 There are a number of examples in the
 https://github.com/untangled-web/untangled-cookbook[Untangled Cookbook].
@@ -593,8 +606,8 @@ There are a few things to understand when implementing a mutation:
 
 - You must return a map whose main key is `:action` and whose value is a function that will accomplish the change
    - The function should return a map. If any data came into the mutation from the client as a temporary ID, then
-     the map should contain the key `:tempids` whose value is a map from the incoming tempid to the newly assigned
-     permanent ID.
+     the map should contain the key `:tempids` whose value is a map where the incoming tempid is the key and the
+     newly assigned permanent ID is the value.
 
 === Server reads (after mutation)
 
@@ -605,7 +618,7 @@ https://youtu.be/t49JYB27fv8?list=PLVi9lDx-4C_T_gsmBQ_2gztvk6h_Usw6R&t=1535[serv
 
 ==== Loading markers
 
-When an item reaches the tip of networking queue and is pulled off Untangled will replace (unless told not to) the data
+When an item reaches the tip of networking queue and is pulled off, Untangled will replace (unless told not to) the data
 being loaded with a marker that the UI can use to show an alternate representation (e.g. a spinner in place of a table). There
 is also a global loading marker at the top of the application state.
 
