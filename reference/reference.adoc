@@ -770,9 +770,9 @@ The database component API includes the following (protocol) methods:
 The goals of the schema migration system are:
 
 1. Ensure that you cannot start a production server on a database whose schema does *not* conform to the desired schema.
-1. Ensure that you have the means to prevent accidental premature migration of a production database.
-1. Ensure that migrations are applied once and only once.
-1. Easily track what changes have been made to the database over time.
+2. Ensure that you have the means to prevent accidental premature migration of a production database.
+3. Ensure that migrations are applied once and only once.
+4. Easily track what changes have been made to the database over time.
 
 The schema support in Untangled Datomic is a fork of https://github.com/Yuppiechef/datomic-schema[Yuppiechef's Datomic Schema] with additions for experimental additional
 schema enforcements. The <<Database Configuration>> section talks about the `:schema` key. The namespace you use there
@@ -800,7 +800,7 @@ To meet the overall goals (stated at the top of this section), we recommend that
 in your production configuration. The following sample entry point can serve as a template for starting
 your server but also allowing an admin to run your migrations from the CLI in a controlled fashion:
 
-[souce]
+[source]
 ----
 (ns core
   (:require
@@ -878,7 +878,7 @@ A full sample schema looks like this in a migration file:
   [(s/generate-schema
      [(s/schema user
                (s/fields
-                  [user-id :uuid :unique-identity :definitive "Unique User ID for the user, this value should not be changed as it defines the user over time. This value is used as the :sub value in the OAuth tokens."]
+                  [user-id :uuid :unique-identity :definitive "Unique User ID for the user."]
                   [email :string :unique-value "Email for the user. Must be unique across all users"]
                   [password :string :unpublished "Hash encoded password"]))
 
