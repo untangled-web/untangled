@@ -28,7 +28,7 @@ The mechanism for creating components is the `defui` macro:
 This macro generates a React class as a plain JavaScript class, so it is completely compatible with the
 React ecosystem.
 
-Notice the use of `Object`. It indicates that the following method bodies (like in 
+Notice the use of `Object`. It indicates that the following method bodies (like in
 http://clojure.org/reference/protocols[protocols^]) are being added to the
 generated class. From an OO perspective, this is like saying \"my widget extends Object\". The `render`
 method is the only method you need, but you can also add in your own methods or React lifecycle
@@ -36,7 +36,7 @@ methods.
 
 === React lifecycle methods
 
-If you wish to provide 
+If you wish to provide
 https://facebook.github.io/react/docs/component-specs.html#lifecycle-methods[lifecycle methods^], you can
 define them under the Object section of the UI:
 
@@ -81,7 +81,7 @@ also do it manually.
 In order to render components on the screen you need an element factory.
 You generate a factory with `om/factory`, which will then
 act like a new 'tag' for your DOM. We commonly prefix these factories with `ui-` so
-we don't confuse them with query attribute names and other local bindings. If the 
+we don't confuse them with query attribute names and other local bindings. If the
 component is ever to be rendered in a list of adjacent elements then the factory should
 be given a key function for generating unique React keys on the component.
 
@@ -114,7 +114,7 @@ You access properties in a component using `om/props`:"
 
 In plain React you store component local state and pass data from the parent to the child through props.
 You also pass your callbacks through props. In Untangled, we need a slight variation of
-this because a component can have a query that asks the underlying system for data. 
+this because a component can have a query that asks the underlying system for data.
 
 If you complect callbacks and such with this queried data then you run into trouble because the rendering system
 can re-render a component without going through the parent, meaning that callbacks could be lost.
@@ -200,8 +200,8 @@ person has a pointer to the person that is their mate. This creates a graph with
 [source]
 ----
 {:my-list [ [:people/by-id 1] [:people/by-id 2] ]
- :people/by-id { 
-   1 { :db/id 1 :person/name "Tony" :person/mate [:people/by-id 2]} 
+ :people/by-id {
+   1 { :db/id 1 :person/name "Tony" :person/mate [:people/by-id 2]}
    2 { :db/id 2 :person/name "Jill" :person/mate [:people/by-id 1]}}}
 ----
 
@@ -234,12 +234,12 @@ if this query was against the root of the graph, it would mean the top-level dat
 keys `:a`, `:b`, and `:c`. In the context of a join (or sequence of joins) it indicates attribute reads in that
 context.
 
-One may query any attribute that makes sense, including an entire table. For example, the query `[:people/by-id]` 
+One may query any attribute that makes sense, including an entire table. For example, the query `[:people/by-id]`
 against the database above will return:
 
 [source]
 ----
-{ :people/by-id { 1 { :db/id 1 :person/name "Tony" :person/mate [:people/by-id 2]} 
+{ :people/by-id { 1 { :db/id 1 :person/name "Tony" :person/mate [:people/by-id 2]}
                   2 { :db/id 2 :person/name "Jill" :person/mate [:people/by-id 1]}}}
 ----
 
@@ -248,7 +248,7 @@ against the database above will return:
 Joins can be done against reference typed attributes (which essentially means an attribute holding an ident).
 
 Joins are written as a map, where the key is the join point, and the value is a sub-query: `[{:my-list [:person/name]}]`. If
-the join point is a vector of idents, then it is a to-many join and the query will result in multiple values. If 
+the join point is a vector of idents, then it is a to-many join and the query will result in multiple values. If
 the join point is a single ident, then it is a to-one join, and the query will result in a single value. In the
 context of our database above this query should return the names of the people in my list.
 
@@ -322,7 +322,7 @@ Unions work fine on to-one joins exactly the same (returning only one result).
 === Query parameters
 
 The query language includes support for adding a parameter map to every kind of query element. Untangled does not
-support such parameters on the UI; however, since the same query language is used with respect to the server, it is 
+support such parameters on the UI; however, since the same query language is used with respect to the server, it is
 useful to know how to represent them.
 
 Basically, you surround the query element with parens, and add a map as the second entry.
@@ -337,7 +337,7 @@ Again, the the UI cannot make sense of these, but you can write such queries to 
 Building your initial application state can be done in one of three ways. The recommended approach is to co-locate the
 application state on the components that will use it. You may also hand-build either a tree (which can be
 auto-normalized by the UI components into a graph). Finally, you may hand-build a graph database in the format described
-earlier. 
+earlier.
 
 All three methods should result in a graph database. They are just different approaches at initial input, with different
 pros/cons.
@@ -431,7 +431,7 @@ Untangled provides a multimethod that you can hook your own mutations into.
 (ns app.mutations
   (:require [untangled.client.mutations :as m]))
 
-(defmethod m/mutate 'my/mutation-symbol [env k params] 
+(defmethod m/mutate 'my/mutation-symbol [env k params]
    { :action (fn[] ...) })
 ----
 
@@ -469,9 +469,9 @@ when there is a common behavior that should happen after some set of mutations.
 
 === UI refresh after mutation
 
-Untangled uses Om to manage the UI, and as such the UI refresh story is Om's story. The basic 
+Untangled uses Om to manage the UI, and as such the UI refresh story is Om's story. The basic
 rule is that when you `transact!`, the component (subtree) used for the transaction will be refreshed in the UI. This
-allows you to automatically handle a lot of UI updates without having to think much; however, there are a couple of 
+allows you to automatically handle a lot of UI updates without having to think much; however, there are a couple of
 general rules and tools you can use when this alone is insufficient.
 
 . Move the transaction to a parent, and pass a callback that invokes (the parent's) transaction in the child. This
@@ -673,26 +673,291 @@ Mention gotchas:
 == Untangled Datomic
 
 The Untangled Datomic library includes a few useful additions that make it easier to integrate one or more Datomic
-databases as persistent storage:
+databases as persistent storage. It includes:
 
-- A configurable database component
-- Schema and migration support
-- Experimental schema rule enforcement for additional referential integrity checks
+- A configurable database component for use with Untangled Server
+- Schema and migration support (based on Yuppiechef Datomic Schema)
+- Experimental schema rule enforcement for additional referential integrity checks (experimental)
 
 === Injecting and configuring database(s)
 
+Untangled Datomic includes a database component that can be easily added to an Untangled Server. The steps
+are quite simple:
 
-=== Schema support
+- Create a configuration (TODO: LINK TO configuration section)
+- Create a database using `untangled.datomic.core/build-database` and assign that database a name
+- Inject the database into the parser (so you can access it for reads/mutations)
+- Pull the database from the environment when parsing a request
 
-The schema support in Untangled Datomic is a fork of Yuppiechef's Datomic Schema with additions for experimental additional
-schema enforcements.
+==== Database Configuration
 
-=== Migrations
+The component looks for the configuration to come from the Untangled Server's built-in configuration
+component. You can configure as many databases as you need. The  key-path for a database's
+config is `[:datomic :dbs :NAME]`. For example, the TODO MVC implementation sets up a development
+mode in-memory Datomic database that will auto-migrate and auto-drop on stop/start. The keys
+of interest are:
+
+- `:url` The Datomic db URL
+- `:schema` the namespace in your source where schema definitions live
+- `:auto-migrate` automatically detect and run missing migrations (recommended OFF in production. You can run
+migrations manually from command line)
+- `:auto-drop` automatically drop the database on shutdown. Useful in development mode where you're
+still chaning schema in incompatible ways.
+
+[source]
+----
+{ :datomic {:dbs {:NAME {:url          "datomic:mem://todo"
+                        :schema       "todomvc.migrations"
+                        :auto-migrate true
+                        :auto-drop    true
+                        }}}}
+----
+
+==== Creating the database component
+
+Create a database component is as simple as `(untangled.datomic.core/build-database :NAME)`. The
+`:NAME` keyword must match the name used in the config. Typically you will embed this into
+your server build. You can see this in action in TODO MVC at
+https://github.com/untangled-web/untangled-todomvc/blob/master/src/server/todomvc/system.clj[initial setup:]
+
+[source]
+----
+(defn make-system []
+  (let [config-path "/usr/local/etc/server.edn"]
+    (core/make-untangled-server
+      :config-path config-path
+      :parser (om/parser {:read api/api-read :mutate logging-mutate})
+      :parser-injections #{:todo-database}
+      :components {:todo-database (build-database :todo)
+                   :logger        {}})))
+----
+
+Note that the `build-database` is given the name to configure, and you can use an alternate
+name for the actual component (in this case `:todo-database`). The component can be made
+available simply by including it in the injection set (`:parser-injections`).
+
+==== Accessing the Database in your Parser
+
+The server reads/mutates will automatically include any components that you name in the
+`:parser-injections` set. So, you read/mutate need only pull them out:
+
+Many samples exist in the code of TODO MVC. For example:
+
+[source]
+----
+(defmethod apimutate 'todo/delete-item [{:keys [todo-database]} _ {:keys [id]}]
+  {:action #(let [connection (db/get-connection todo-database)
+                  tx [[:db.fn/retractEntity id]]]
+             @(d/transact connection tx)
+             true)})
+----
+
+The database component API includes the following (protocol) methods:
+
+[source]
+----
+(defprotocol Database
+  (get-connection [this] "Get a connection to this database" )
+  (get-info [this]
+    "Get descriptive information about this database. This will be a map that includes general information, such as the
+    name and uri of the database. Useful for logging and debugging.")
+  (get-db-config [this]
+    "Get the config for this database, usually based on the database's name"))
+----
+
+== Schema Migrations
+
+The goals of the schema migration system are:
+
+1. Ensure that you cannot start a production server on a database whose schema does *not* conform to the desired schema.
+1. Ensure that you have the means to prevent accidental premature migration of a production database.
+1. Ensure that migrations are applied once and only once.
+1. Easily track what changes have been made to the database over time.
+
+The schema support in Untangled Datomic is a fork of https://github.com/Yuppiechef/datomic-schema[Yuppiechef's Datomic Schema] with additions for experimental additional
+schema enforcements. The <<Database Configuration>> section talks about the `:schema` key. The namespace you use there
+will be scanned for files that are *not* named `template.clj`. The migration system
+scans the names for an ISO date. We recommend naming them
+description_yyyyMMDD.clj. The description will not affect the sorting.
+
+The migrations (once sorted) are then checked via https://github.com/rkneufeld/conformity[conformity]. If `auto-migrate`
+is true, then the migrations are applied to the database (and recorded as applied). Otherwise the startup will throw an
+exception if the database does *not* conform.
+
+=== Running Migrations in Development
+
+You can easily configure you development machine with a file that sets `auto-migrate` to true. Optionally setting
+`auto-drop` to true can make life easier as you rapidly evolve and edit your initial schema.
+
+=== Running Migrations in Production
+
+Once you're in production, you will be wanting to be very careful with migrations. You will want to ensure that
+your migrations will apply in order, and that there is a controlled procedure for doing them. It is an *ERROR*
+to edit a migration that has been applied in production. You should only ever add new migration files to be
+applied in production.
+
+To meet the overall goals (stated at the top of this section), we recommend that you set `auto-migrate` to `false`
+in your production configuration. The following sample entry point can serve as a template for starting
+your server but also allowing an admin to run your migrations from the CLI in a controlled fashion:
+
+[souce]
+----
+(ns core
+  (:require
+    [com.stuartsierra.component :as component]
+    [YOUR.SYSTEM :as sys]
+    [untangled.server.core :as c]
+    [untangled.server.impl.components.config :refer [load-config]]
+    [untangled.datomic.schema :as schema]
+    [untangled.datomic.core :as dc]
+    [taoensso.timbre :as timbre])
+  (:gen-class))
+
+(def console (System/console))
+(defn exit [exit-code]
+  (System/exit exit-code))
+
+(defn exit-if-headly
+  "Exits with specified unix-y exit code, if the program is being run from a command line."
+  [exit-code]
+  (if console (exit exit-code)))
+
+(def config-path "/usr/local/etc/production.edn")
+(def production-config-component (c/new-config config-path))
+
+(defn -main
+  "Main entrypoint"
+  [& args]
+  (let [system (c/make-untangled-server .....) ; your untangled server
+        stop (fn [] (component/stop system))
+        cli-config (load-config production-config-component)
+        db-config (:dbs cli-config)]
+    ; main-handler is a pre-written CLI hook for dealing with args
+    (if args (do (dc/main-handler db-config args) (exit-if-headly 0))
+             (if (or (:auto-migrate cli-config) (empty? (schema/migration-status-all db-config false)))
+               (do (.addShutdownHook (Runtime/getRuntime) (Thread. stop))
+                   (component/start system))
+               (do (timbre/fatal "System startup failed! Database does not conform to all migrations")
+                   (exit-if-headly 1))))))
+----
+
+The above main:
+
+- Will fail to start the server if the migrations are out of date
+- Can be used to check/run migrations
+- Will start the server if migrations are already properly applied
+
+Now (assuming you have a config file in place) you should be able to:
+
+* `java -jar myserver.jar` : Start the server (fails if migrations are not applied)
+* `java -jar myserver.jar --help` : Get help on running migrations
+* `java -jar myserver.jar --status all` : Get the migration status of all databases
+* `java -jar myserver.jar --migrate all` : Run migrations on all databases
+* `java -jar myserver.jar --migrate todo` : Run migrations on the `todo` database
+* `java -jar myserver.jar -l` : List all of the configured databases
+
+== Schema Extensions
+
+Untangled Datomic includes some additional schema support that is integrated into the database as metadata. This
+information can be useful as simple documentation, and can even be validated with an included (experimental)
+function `vtransact` (for validated transact). You may wish to simply use `datomic-schema` directly instead, but
+these extensions are under experimental evaluation in our own work. It was impossible for us to integrate
+our extensions as part of `datomic-schema`, and as such we ended up with a fork.
+
+A full sample schema looks like this in a migration file:
+
+[source]
+----
+(ns sample-migrations.migrations.users-20150609
+  (:require [untangled.datomic.schema :as s]
+            [datomic.api :as d]))
+
+(defn transactions
+  "Returns a vector of transactions (each of which is a vector of operations to transact)"
+  []
+  [(s/generate-schema
+     [(s/schema user
+               (s/fields
+                  [user-id :uuid :unique-identity :definitive "Unique User ID for the user, this value should not be changed as it defines the user over time. This value is used as the :sub value in the OAuth tokens."]
+                  [email :string :unique-value "Email for the user. Must be unique across all users"]
+                  [password :string :unpublished "Hash encoded password"]))
+
+       (s/schema component (s/fields [name :string :unique-identity]))
+
+       (s/schema application
+                 (s/fields
+                   [application-id :uuid :unique-identity :definitive]
+                   [name :string]
+                   [component :ref :many :component {:references :component/name}]))]
+     {:index-all? true})
+   (s/entity-extensions :user "A User" [])
+   (s/entity-extensions :component "A component" [:user/email])
+   (s/entity-extensions :application "An application" [])])
+----
+
+=== Typed Entities
+
+The schema extensions have the concept of loose types for entities. The idea is that the namespace of attributes
+indicates (confers) a type IFF that attribute is marked `:definitive`. For example, a Datomic entity with:
+
+[source]
+----
+{ :user/user-id 44 }
+----
+
+is a `user` because `:user/user-id` is marked definitive. From this point forward, ONLY attributes that have
+namespaces of the conferred type (and foriegn attributes) are allowed on that entity (enforce only if you use
+`vtransact`).
+
+An entity with:
+
+[source]
+----
+{ :user/user-id 22 :application/application-id 44}
+----
+
+would be both a `user` and an `application` (validation is done at the end of creation, and both of those attributes
+confer a type.)
+
+=== Foreign Attributes
+
+In some cases it makes sense for an attribute to appear on an entity even though the inferred type is wrong. These
+are known as foreign attributes, and are specified via a separate schema transaction using the `entity-extensions`
+function. This function both adds a doc string for the overall entity, and allows you to list attributes
+that are legally allowed to appear on an entity. In the schema above we've indicated that a `component` can
+have a `:user/email` (even though it isn't a user). Perhaps for the admin of that component.
+
+If an attribute is `:definitive` and foreign, then it will confer its type when added (e.g. :user/email can be added
+at any time to a `component`, but it does not make the component also become a `user`. If `:user/email` was marked
+`:definitive`, then adding it to a `component` would add that type to that entity (which would then be
+both a `component` and `user`). Again, all of this is enforced by `vtransact`.
+
+=== Additional Schema Markup
+
+In additional to the normal schema support from `datomic-schema`, you may append the following:
+
+* `:required` - Indicates that an entity of the attributes namespace type MUST include this attribute. E.g. if the
+required attribute's namespace is `user`, then `user` entities MUST have that attribute.
+* `{ :references :attr/name }` - A foreign-key constraint. Indicates that you may use the specified (which must be
+a ref) to point to entities that contain the given target `:attr/name` attribute. This, combined with typed
+entities and `:required` can be used to place explicity limits on the entity graph.
+* `:definitive` - Indicates that the given attribute confers its namespace as an additional type on an entity.
+* `:unpublished` - Indicates that the attribute contains secure information and should not be shown (advisory marker...you
+interpret the meaning)
+
+=== Foreign Key Integrity
+
+The map `{:references :attr/name}` indicates that a given reference attribute may only point to an entity (or entities)
+have the given attribute. Since entities have no real type, you specify an attribute that you expect to be on all
+attributes of the referenced type (e.g. `:user/user-id`). This, combined with the `:required` marker can be used
+to create a system of foreign-key integrity. Again, this is enforced when using `vtransact`.
 
 === Validated transactions (EXPERIMENTAL)
 
-The library comes with a function called `vtransact`. It works just like Datomic's `transact`, but enforces the additional
-schema constraints. This function should be considered experimental. We'd be interested in feedback.
+The library comes with a function called `vtransact`. It works just like Datomic's `transact`, but enforces the above
+additional schema constraints. This function should be considered experimental. We'd be interested in feedback.
+
+The API is identical to Datomic's `transact` function.
 
 == Websockets
 
