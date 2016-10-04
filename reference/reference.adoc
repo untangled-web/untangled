@@ -28,7 +28,7 @@ The mechanism for creating components is the `defui` macro:
 This macro generates a React class as a plain JavaScript class, so it is completely compatible with the
 React ecosystem.
 
-Notice the use of `Object`. It indicates that the following method bodies (like in 
+Notice the use of `Object`. It indicates that the following method bodies (like in
 http://clojure.org/reference/protocols[protocols^]) are being added to the
 generated class. From an OO perspective, this is like saying \"my widget extends Object\". The `render`
 method is the only method you need, but you can also add in your own methods or React lifecycle
@@ -36,7 +36,7 @@ methods.
 
 === React lifecycle methods
 
-If you wish to provide 
+If you wish to provide
 https://facebook.github.io/react/docs/component-specs.html#lifecycle-methods[lifecycle methods^], you can
 define them under the Object section of the UI:
 
@@ -81,7 +81,7 @@ also do it manually.
 In order to render components on the screen you need an element factory.
 You generate a factory with `om/factory`, which will then
 act like a new 'tag' for your DOM. We commonly prefix these factories with `ui-` so
-we don't confuse them with query attribute names and other local bindings. If the 
+we don't confuse them with query attribute names and other local bindings. If the
 component is ever to be rendered in a list of adjacent elements then the factory should
 be given a key function for generating unique React keys on the component.
 
@@ -114,7 +114,7 @@ You access properties in a component using `om/props`:"
 
 In plain React you store component local state and pass data from the parent to the child through props.
 You also pass your callbacks through props. In Untangled, we need a slight variation of
-this because a component can have a query that asks the underlying system for data. 
+this because a component can have a query that asks the underlying system for data.
 
 If you complect callbacks and such with this queried data then you run into trouble because the rendering system
 can re-render a component without going through the parent, meaning that callbacks could be lost.
@@ -200,8 +200,8 @@ person has a pointer to the person that is their mate. This creates a graph with
 [source]
 ----
 {:my-list [ [:people/by-id 1] [:people/by-id 2] ]
- :people/by-id { 
-   1 { :db/id 1 :person/name "Tony" :person/mate [:people/by-id 2]} 
+ :people/by-id {
+   1 { :db/id 1 :person/name "Tony" :person/mate [:people/by-id 2]}
    2 { :db/id 2 :person/name "Jill" :person/mate [:people/by-id 1]}}}
 ----
 
@@ -234,12 +234,12 @@ if this query was against the root of the graph, it would mean the top-level dat
 keys `:a`, `:b`, and `:c`. In the context of a join (or sequence of joins) it indicates attribute reads in that
 context.
 
-One may query any attribute that makes sense, including an entire table. For example, the query `[:people/by-id]` 
+One may query any attribute that makes sense, including an entire table. For example, the query `[:people/by-id]`
 against the database above will return:
 
 [source]
 ----
-{ :people/by-id { 1 { :db/id 1 :person/name "Tony" :person/mate [:people/by-id 2]} 
+{ :people/by-id { 1 { :db/id 1 :person/name "Tony" :person/mate [:people/by-id 2]}
                   2 { :db/id 2 :person/name "Jill" :person/mate [:people/by-id 1]}}}
 ----
 
@@ -248,7 +248,7 @@ against the database above will return:
 Joins can be done against reference typed attributes (which essentially means an attribute holding an ident).
 
 Joins are written as a map, where the key is the join point, and the value is a sub-query: `[{:my-list [:person/name]}]`. If
-the join point is a vector of idents, then it is a to-many join and the query will result in multiple values. If 
+the join point is a vector of idents, then it is a to-many join and the query will result in multiple values. If
 the join point is a single ident, then it is a to-one join, and the query will result in a single value. In the
 context of our database above this query should return the names of the people in my list.
 
@@ -322,7 +322,7 @@ Unions work fine on to-one joins exactly the same (returning only one result).
 === Query parameters
 
 The query language includes support for adding a parameter map to every kind of query element. Untangled does not
-support such parameters on the UI; however, since the same query language is used with respect to the server, it is 
+support such parameters on the UI; however, since the same query language is used with respect to the server, it is
 useful to know how to represent them.
 
 Basically, you surround the query element with parens, and add a map as the second entry.
@@ -337,7 +337,7 @@ Again, the the UI cannot make sense of these, but you can write such queries to 
 Building your initial application state can be done in one of three ways. The recommended approach is to co-locate the
 application state on the components that will use it. You may also hand-build either a tree (which can be
 auto-normalized by the UI components into a graph). Finally, you may hand-build a graph database in the format described
-earlier. 
+earlier.
 
 All three methods should result in a graph database. They are just different approaches at initial input, with different
 pros/cons.
@@ -431,7 +431,7 @@ Untangled provides a multimethod that you can hook your own mutations into.
 (ns app.mutations
   (:require [untangled.client.mutations :as m]))
 
-(defmethod m/mutate 'my/mutation-symbol [env k params] 
+(defmethod m/mutate 'my/mutation-symbol [env k params]
    { :action (fn[] ...) })
 ----
 
@@ -469,9 +469,9 @@ when there is a common behavior that should happen after some set of mutations.
 
 === UI refresh after mutation
 
-Untangled uses Om to manage the UI, and as such the UI refresh story is Om's story. The basic 
+Untangled uses Om to manage the UI, and as such the UI refresh story is Om's story. The basic
 rule is that when you `transact!`, the component (subtree) used for the transaction will be refreshed in the UI. This
-allows you to automatically handle a lot of UI updates without having to think much; however, there are a couple of 
+allows you to automatically handle a lot of UI updates without having to think much; however, there are a couple of
 general rules and tools you can use when this alone is insufficient.
 
 . Move the transaction to a parent, and pass a callback that invokes (the parent's) transaction in the child. This
@@ -645,6 +645,71 @@ exceptions, since the default server implementation sends back a hard error.
 - Fallbacks: A fallback is a placeholder in mutations that is called if the mutation transaction fails. It can modify
 the app state in any way it sees fit to represent the handling of the error (e.g. change UI state to show an error
 dialog, reload the page, etc.).
+
+=== Configuration
+
+==== defaults.edn
+Your application must have a config/defaults.edn available in your `:resource-paths`,
+and it must be a map containing safe default values for your application. +
+An example of a "safe" default is not auto migrating or dropping tables.
+[source,clojure]
+----
+{:datomic
+  {:dbs
+    {:your-db
+      {:uri "..."
+       :auto-migrate false
+       :auto-drop    false}
+----
+
+==== Development
+Parameterizing your `:config-path` when calling `make-untangled-server` lets you use different config paths at development (or production) time.
+[source,clojure]
+.system.clj
+----
+(defn make-system [cfg-path]
+  (make-untangled-server
+    :config-path cfg-path
+    ...))
+----
+[source,clojure]
+.user.clj
+----
+;;development
+(def config-paths
+  {:dev "config/dev.edn"
+   :secure "config/secure.edn"})
+(defn init [path]
+  (make-system (get config-paths path)))
+----
+[source,clojure]
+.core.clj
+----
+;;production
+(defn -main [& args]
+  (.start (make-system "/usr/local/etc/my_app.edn")))
+----
+
+==== Production
+In production builds however it is convenient to be able to point to switch between configs at run time. +
+So when running your server you can specify the path of the config file using the `-Dconfig=...` config system property.
+
+TIP: Options come before the jar +
+`java [-options] -jar jarfile [args...]`.
+
+==== Environmental Variables
+It is often convenient & useful to be able to reference environmental variables, so we provide a way to access env vars from your config file as follows:
+
+- `:env/PORT` => "8080"
+- `:env.edn/PORT` => 8080
+
+[WARNING]
+====
+Note the subtle distinction between the two.
+
+- `+++:env/*+++` will read the env var as a *string*.
+- `+++:env.edn/*+++` will read it as *edn* using `clojure.edn/read-string`.
+====
 
 == Untangled Spec
 
