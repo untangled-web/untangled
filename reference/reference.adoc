@@ -1,6 +1,11 @@
 = Untangled Developer's Reference
 :source-highlighter: coderay
 :source-language: clojure
+:toc:
+:toc-placement: left
+:sectlinks:
+:sectanchors:
+:sectnums:
 
 == Introduction
 
@@ -646,13 +651,68 @@ exceptions, since the default server implementation sends back a hard error.
 the app state in any way it sees fit to represent the handling of the error (e.g. change UI state to show an error
 dialog, reload the page, etc.).
 
+=== Building your own components
+When creating an untangled server, it is often desirable to create
+custom app specific https://github.com/stuartsierra/component[Stuart Sierra Components]. +
+`make-untangled-server` takes a `:component` map keyed by component name with the components as values.
+[source]
+----
+(defrecord MyComp [name]
+  component/Lifecycle ;;<5>
+  (start [this] ...)
+  (stop [this] ...))
+(defn build-my-comp [name]
+  (component/using ;;<4>
+    (map->MyDatabase {:name name})
+    [:config]))
+
+(make-untangled-server
+  :parser-injections #{:config :database} ;;<1>
+  :components {:database ;;<2>
+               (build-my-comp "Best Component")}) ;;<3>
+
+(defn api-read [{:as env :keys [config]} k params] ...) ;;<6>
+(defn api-mutate [{:as env :keys [config]} k params] ...) ;;<6>
+----
+<1> Injects the named components into your parser environment for access during reads and mutations.
+<2> Name of the component, for parser injections.
+<3> The Component itself.
+<4> The component can be wrapped with `component/using` for dependency injection.
+<5> Should implement `component/Lifecycle`.
+<6> `:database` is now available in the parser env, eg the first argument to api-read and api-mutate.
+
+[NOTE]
+====
+The components `:config`, `:handler`, and `:server` are always available. +
+To make them available you *must* include them in either your:
+
+- `:parser-injections`
+- component depenencies, eg: `(component/using MyComp dependencies)`
+====
+
 === Configuration
 
-==== defaults.edn
-Your application must have a config/defaults.edn available in your `:resource-paths`,
+==== Abstract
+Configuration for your application is about tweaking the behavior of your program statically before it even runs.
+Traditionally configuration is an formed by aggregating a plethera of sources, untangled config believes that constraining you to one file and some defaults, leads to more a maintanable and debuggable system.
+
+[NOTE]
+====
+Config edn files can contain arbitrary *edn data* that will be read in as soon as your server starts up. +
+You can inject config into your parser environment by putting it in your `:parser-injections`.
+[source]
+----
+(make-untangled-server
+  :parser-injections #{:config})
+----
+See <<Building your own components>> for more detail on parser injections.
+====
+
+==== Default values
+Your application must have a `config/defaults.edn` available in your `:resource-paths`,
 and it must be a map containing safe default values for your application. +
-An example of a "safe" default is not auto migrating or dropping tables.
-[source,clojure]
+An example of a "safe" default is not auto migrating or dropping tables on startup.
+[source]
 ----
 {:datomic
   {:dbs
@@ -664,15 +724,14 @@ An example of a "safe" default is not auto migrating or dropping tables.
 
 ==== Development
 Parameterizing your `:config-path` when calling `make-untangled-server` lets you use different config paths at development (or production) time.
-[source,clojure]
+[source]
 .system.clj
 ----
 (defn make-system [cfg-path]
   (make-untangled-server
-    :config-path cfg-path
-    ...))
+    :config-path cfg-path))
 ----
-[source,clojure]
+[source]
 .user.clj
 ----
 ;;development
@@ -682,7 +741,7 @@ Parameterizing your `:config-path` when calling `make-untangled-server` lets you
 (defn init [path]
   (make-system (get config-paths path)))
 ----
-[source,clojure]
+[source]
 .core.clj
 ----
 ;;production
