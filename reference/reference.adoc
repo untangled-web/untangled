@@ -493,7 +493,7 @@ Independent of how you store data in your database, you know what you've changed
 a mutation you can indicate that you'd like the parts of the UI that *ask* for those other bits of data to refresh.
 
 
-== Untangled Server and Full Stack Integration
+== Untangled Server and Fetching Data
 
 The Untangled server library provides a full-stack development experience for Untangled Web applications. When combined
 with the client library, you get a number of base features that are useful for most applications:
@@ -512,7 +512,7 @@ common patterns needed by most applications:
 - Clear network communication ordering to prevent out-of-order execution reasoning
 - The ability to send queries in parallel when sequential reads are not necessary for clear reasoning (parallel loading)
 
-=== Overall Network Plumbing
+=== Fetching Data From the Server
 
 There are a number of convenient things that the network stack does automatically, as shown in the
 diagram below:
@@ -562,32 +562,33 @@ Post Mutation::
    The client API for network queries allows for a user-defined post mutation to run at the end of the chain. This is
    used to create or update alternate UI views of the recently loaded data, if necessary.
 
-=== Implementing server queries
+==== Loading Data During Initialization
 
-The server-side queries come in a the full EDN send from the client. The Untangled Server code automatically decodes
-this query and passes it to an Om parser that you define. The basics of processing these queries are covered in the
-https://github.com/untangled-web/untangled-tutorial[tutorial].
-
-The primary thing to remember is that server query processing functions (which run inside of a parser)
-should return a map whose only key is `:value` and whose value is the value for that query attribute/fragment.
-
-=== Initial Data Loading
-
-Initial data loading can be done in the client by adding a `started-callback` parameter to the construction of the
-client. One or more calls to `untangled.client.data-fetch/load-data` can be used to queue up initial reads from your
-server, and each of those loads can specify `:parallel true` to indicate that the loads are not order dependent
-(if that is indeed true).
+When an Untangled Application is mounted, it will render the application using initial application state as described
+in the http://untangled-web.github.io/untangled/reference/reference.html#_initial_application_state[Initial Application State section].
+The first opportunity for an Untangled app to load data from a remote server is in the function defined under the
+`:started-callback` parameter when making a new untangled client:
 
 [source]
 ----
-(untangled.client.core/new-untangled-client
-  :network-error-callback handle-network-error
-  :started-callback       (fn [{:keys [reconciler]}]
-                            (om.next/transact! reconciler '[(app/remote-load)])
-                            (untangled.client.data-fetch/load-data reconciler [:data/to-fetch] :parallel true)))
+(require [untangled.client.core :as uc]
+         [untangled.client.data-fetch :as df])
+
+(uc/new-untangled-client
+    :started-callback (fn [reconciler]
+                        (df/load-data reconciler [:some {:query [:on-app-load]}])))
 ----
 
-=== On-demand Loading
+One or more calls to `untangled.client.data-fetch/load-data` can be used to queue up initial reads from your server, and each of those
+loads can specify `:parallel true` to indicate that the loads are not order dependent (if that is indeed true).
+You may also choose to hit an external API on app load and manually merge data into the app-state by calling
+`(om/app-state reconciler)` to get the app-state atom.
+
+NOTE: A re-render is *not* scheduled after the started-callback is run. If you decide to manually change the app-state
+atom in the started-callback, you must schedule your own re-render of the root component. Data fetches are standard
+transactions, and will take care of scheduling their own re-renders.
+
+==== Loading Data On Demand
 
 Any event (timeout, user interaction, etc) can be used to trigger additional loads. The typical calls used for this
 are `untangled.client.data-fetch/load-data` and `untangled.client.data-fetch/load-field`. The former is completely general
@@ -597,36 +598,112 @@ based on the component's ident, fields, and sub-queries.
 There are a number of examples in the
 https://github.com/untangled-web/untangled-cookbook[Untangled Cookbook].
 
-=== Implementing server mutations
+WARNING: Due to the various circumstances under which React Lifecycle methods are called, we do not recommend that data
+fetches are executed within the body of overridden Lifecycle methods in your Om components. Your network traffic may be
+higher tha necessary if Lifecycle methods are triggered multiple times. Data fetches trigger also trigger a re-render
+cycle, which could potentially put your application into an infinite loop of loading and re-rendering.
 
-Server mutations are coded exactly like client mutations, but their body does whatever server-side operations you care
-to do (instead of mutating a client-focused UI database).
+==== Server reads (after mutation)
 
-There are a few things to understand when implementing a mutation:
+If you execute a mutation that does not optimistically update the client before executing on the server, then the
+server will have updated information that needs to make its way back to the client.
 
-- You must return a map whose main key is `:action` and whose value is a function that will accomplish the change
-   - The function should return a map. If any data came into the mutation from the client as a temporary ID, then
-     the map should contain the key `:tempids` whose value is a map where the incoming tempid is the key and the
-     newly assigned permanent ID is the value.
+However, *server mutations in Untangled do not have return values*.
 
-=== Server reads (after mutation)
+The Om model is that mutations can only remap tempids, and will never return newly created data. Even if mutations did
+have return values, they do not contain a query that the client could use to properly merge the server's data into the
+client-side database.
 
-You may add a server read to a transaction that also contains a mutation. In this case the mutations and reads will be split,
-the mutations will run, then the reads will run (ordered using the network queue). Server reads take the form of an
-`untangled/load` built-in client mutation. See the getting started video about
+When the client is displaying data and runs a mutation that will modify that data, there are two possible execution paths:
+
+1. Update the client-side database first (optimistically), and then send the mutation to run on the server.
+2. Send the mutation directly to the server, followed immediately by a remote read to obtain the new data.
+
+The Untangled design patterns favor the first execution path over the second, however, both are supported. The first
+execution path is made possible by specifying both a `:remote` keyword and an `:action` keyword in the map returned
+by your mutation, which follow standard Om patterns:
+
+```
+(require [untangled.client.mutations :refer [mutate]])
+
+(defmutation mutate 'person/add-friend [env k params]
+    {:remote true
+     :action (fn []
+                ;; code to optimistically add friend of `friend-id` to the person `person-id` in the client-side database
+                )})
+
+```
+
+You can utilize the second execution path by adding a server read to a transaction that also contains a mutation.
+In this case the mutations and reads will be split, the mutations will run, then the reads will run (ordered using the
+network queue). Server reads take the form of an `untangled/load` built-in client mutation, including all of the
+parameters supported by a call to `load-data`:
+
+```
+(require [om.next :as om]
+         [untangled.client.mutations])
+
+(om/transact! component '[(app/remote-action)
+                          (untangled/load {:query [:data-changed-by-remote-action]
+                                           :post-mutation data/modify-server-response
+                                           :fallback app/handle-failures})])
+```
+
+For a walkthrough of this remote mutation and load execution path, see the getting started video about
 https://youtu.be/t49JYB27fv8?list=PLVi9lDx-4C_T_gsmBQ_2gztvk6h_Usw6R&t=1535[server basics at roughly 25:20]
 
 ==== Loading markers
 
-When an item reaches the tip of networking queue and is pulled off, Untangled will replace (unless told not to) the data
-being loaded with a marker that the UI can use to show an alternate representation (e.g. a spinner in place of a table). There
+When an item reaches the tip of networking queue and is pulled off Untangled will replace the data being loaded with a
+marker that the UI can use to show an alternate representation (e.g. a spinner in place of a table). There
 is also a global loading marker at the top of the application state.
 
-Loading markers are covered in this https://youtu.be/t49JYB27fv8[getting started video]
-and the https://github.com/untangled-web/untangled-cookbook[Untangled Cookbook] recipe about lazy loading visual
-indicators.
+To access the global loading marker, add `[:ui/loading-data '_]` to the query of any component that composes to root.
+This will put a boolean flag in that component's props indicating if there is some some data fetch occurring at the
+moment that the component is rendered.
 
-=== Out-of-band Data (websocket, timeout, XHR)
+The `:ui/loading-data` keyword is set to true when *any load* is occurring. If you want to be sure that a particular
+piece of data is being loaded at a given moment, then you will want to access the data fetch state on that field:
+
+```
+(defui Item
+    static om/IQuery (query [this] [:id :title :ui/fetch-state])
+    ;; note that the *subcomponent* queries for :ui/fetch-state
+    ;; ...
+    Object
+    (render [this]
+        ;; render an item
+    ))
+
+(def ui-item (om/factory Item {:keyfn :id}))
+
+(defui ItemList
+    static om/IQuery (query [this] [{:items (om/get-query Item)}])
+    ;; ...
+    Object
+    (render [this]
+        (let [{:keys [items]} (om/props this)]
+            (if (:ui/fetch-state items)
+                (dom/div nil "Loading...")
+                (dom/div nil (map ui-item items))))))
+
+```
+
+In this case, we might be loading items in the `ItemList` component, and we might not. If we are, then we can tell
+that the field `:items` is being loaded because the map at the `:items` key in props has a `:ui/fetch-state` key.
+If it did not, then we know that there is data available to be rendered (even if that data is `nil`).
+
+Take a look at `untangled.client.data-fetch/lazily-loaded`, which handles the conditional logic in the render-method
+above for you, and offers several enhancements.
+
+If you do not want markers to wipe out the existing data on the client when reloading that data, you may specify the `:marker`
+parameter as `false` in your calls to any of the data fetch methods.
+
+Loading markers are covered in more depth in this https://youtu.be/t49JYB27fv8[getting started video]
+and the https://github.com/untangled-web/untangled-cookbook/tree/master/recipes/lazy-loading-visual-indicators[Untangled
+Cookbook recipe about lazy loading visual indicators].
+
+==== Out-of-band Data (websocket, timeout, XHR)
 
 When using things like websocket server push, timeouts, and manual XHR requests you may have data that you'd like to
 place in your application's state that does not arrive through the normal Untangled processing pipeline. In these cases
@@ -642,7 +719,7 @@ database.
 
 See the docstring of `merge-state!` and `integrate-ident!` in the `untangled.client.core` namespace.
 
-=== Handling network errors
+==== Handling network errors
 
 There are several different kinds of errors that can happen when working with a full-stack application:
 
@@ -658,6 +735,31 @@ exceptions, since the default server implementation sends back a hard error.
 - Fallbacks: A fallback is a placeholder in mutations that is called if the mutation transaction fails. It can modify
 the app state in any way it sees fit to represent the handling of the error (e.g. change UI state to show an error
 dialog, reload the page, etc.).
+
+=== Returning Data to the Client
+
+==== Implementing server queries
+
+The server-side queries come in a the full EDN send from the client. The Untangled Server code automatically decodes
+this query and passes it to an Om parser that you define. The basics of processing these queries are covered in the
+https://github.com/untangled-web/untangled-tutorial[tutorial].
+
+The primary thing to remember is that server query processing functions (which run inside of a parser)
+should return a map whose only key is `:value` and whose value is the value for that query attribute/fragment.
+
+==== Implementing server mutations
+
+Server mutations are coded exactly like client mutations, but their body does whatever server-side operations you care
+to do (instead of mutating a client-focused UI database).
+
+There are a few things to understand when implementing a mutation:
+
+- You must return a map whose main key is `:action` and whose value is a function that will accomplish the change
+   - The function should return a map. If any data came into the mutation from the client as a temporary ID, then
+     the map should contain the key `:tempids` whose value is a map from the incoming tempid to the newly assigned
+     permanent ID. You may optionally add a `:keys` entry whose value is a list of the attributes where data changed.
+     Untangled will not do anything with the `:keys` entry, but you may choose to use it for documentation of what
+     entities changed during the server mutation.
 
 == Untangled Spec
 
