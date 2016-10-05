@@ -736,6 +736,9 @@ exceptions, since the default server implementation sends back a hard error.
 the app state in any way it sees fit to represent the handling of the error (e.g. change UI state to show an error
 dialog, reload the page, etc.).
 
+For a more in depth explanation of handling server errors please see the
+https://github.com/untangled-web/untangled-cookbook/tree/master/recipes/error-handling#error-handling[Error Handling Recipe]
+
 === Returning Data to the Client
 
 ==== Implementing server queries
