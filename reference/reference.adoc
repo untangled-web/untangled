@@ -757,7 +757,9 @@ There are a few things to understand when implementing a mutation:
 - You must return a map whose main key is `:action` and whose value is a function that will accomplish the change
    - The function should return a map. If any data came into the mutation from the client as a temporary ID, then
      the map should contain the key `:tempids` whose value is a map from the incoming tempid to the newly assigned
-     permanent ID.
+     permanent ID. You may optionally add a `:keys` entry whose value is a list of the attributes where data changed.
+     Untangled will not do anything with the `:keys` entry, but you may choose to use it for documentation of what
+     entities changed during the server mutation.
 
 == Untangled Spec
 
