@@ -770,6 +770,32 @@ Note the subtle distinction between the two.
 - `+++:env.edn/*+++` will read it as *edn* using `clojure.edn/read-string`.
 ====
 
+==== Extending or replacing the config component
+If you find yourself wanting to replace the built-in configuration component & semantics, you can simply specify in the `:components` map of `make-untangled-server` a `:config` component.
+[WARNING]
+====
+The new config component must satisfy two criteria:
+
+- Must implement `component/Lifecycle`.
+- Should place the loaded configuration in itself under `:value`.
+====
+
+[source]
+.a naive but simple example
+----
+(defrecord MyConfig [value]
+  component/Lifecycle
+  (start [this]
+    (->> (System/getproperty "config")
+         io/resource
+         slurp
+         read-string
+         (hash-map :value)))
+  (stop [this] this))
+(make-untangled-server
+  :components {:config (->MyConfig)})
+----
+
 == Untangled Spec
 
 Untangled Spec is built on Clojure/Clojurescript test. The entire API of those libraries works within the body of the
