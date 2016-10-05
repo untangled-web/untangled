@@ -546,13 +546,13 @@ API::
 
 Mark missing/Merge::
    This is the first stage of the client response processing. During this phase the query and response are walked. If
-   the response does not contain a value for an attribute that was in the query, then a special `:not-found` value is
-   added to the incoming response. This composite value is then deep merged with the application state. This forces
-   anything that has "disappeared" from the server to be marked as `:not-found` in the app database.
+   the response does not contain a value for an attribute that was in the query, then a special `:untangled.client.impl.om-plumbing/not-found`
+   value is added to the incoming response. This composite value is then deep merged with the application state. This forces
+   anything that has "disappeared" from the server to be marked as `:untangled.client.impl.om-plumbing/not-found` in the app database.
 
 Sweep::
-   This post-processing stage walks the app database and removes anything that has a value of `:not-found`. This is the
-   second half of the mark/sweep of data that has disappeared from the server.
+   This post-processing stage walks the app database and removes anything that has a value of `:untangled.client.impl.om-plumbing/not-found`.
+   This is the second half of the mark/sweep of data that has disappeared from the server.
 
 Remap::
    If the request was a mutation (instead of a query), then the response may contain tempid remaps. This step walks the
@@ -578,7 +578,7 @@ client. One or more calls to `untangled.client.data-fetch/load-data` can be used
 server, and each of those loads can specify `:parallel true` to indicate that the loads are not order dependent
 (if that is indeed true).
 
-[source,clojure]
+[source]
 ----
 (untangled.client.core/new-untangled-client
   :network-error-callback handle-network-error
