@@ -1,6 +1,11 @@
 = Untangled Developer's Reference
 :source-highlighter: coderay
 :source-language: clojure
+:toc:
+:toc-placement: left
+:sectlinks:
+:sectanchors:
+:sectnums:
 
 == Introduction
 
@@ -763,6 +768,151 @@ There are a few things to understand when implementing a mutation:
      permanent ID. You may optionally add a `:keys` entry whose value is a list of the attributes where data changed.
      Untangled will not do anything with the `:keys` entry, but you may choose to use it for documentation of what
      entities changed during the server mutation.
+
+=== Building your own components
+When creating an untangled server, it is often desirable to create
+custom app specific https://github.com/stuartsierra/component[Stuart Sierra Components]. +
+`make-untangled-server` takes a `:component` map keyed by component name with the components as values.
+[source]
+----
+(defrecord MyComp [name]
+  component/Lifecycle ;;<5>
+  (start [this] ...)
+  (stop [this] ...))
+(defn build-my-comp [name]
+  (component/using ;;<4>
+    (map->MyDatabase {:name name})
+    [:config]))
+
+(make-untangled-server
+  :parser-injections #{:config :database} ;;<1>
+  :components {:database ;;<2>
+               (build-my-comp "Best Component")}) ;;<3>
+
+(defn api-read [{:as env :keys [config]} k params] ...) ;;<6>
+(defn api-mutate [{:as env :keys [config]} k params] ...) ;;<6>
+----
+<1> Injects the named components into your parser environment for access during reads and mutations.
+<2> Name of the component, for parser injections.
+<3> The Component itself.
+<4> The component can be wrapped with `component/using` for dependency injection.
+<5> Should implement `component/Lifecycle`.
+<6> `:database` is now available in the parser env, eg the first argument to api-read and api-mutate.
+
+[NOTE]
+====
+The components `:config`, `:handler`, and `:server` are always available. +
+To make them available you *must* include them in either your:
+
+- `:parser-injections`
+- component depenencies, eg: `(component/using MyComp dependencies)`
+====
+
+=== Configuration
+
+==== Abstract
+Configuration for your application is about tweaking the behavior of your program statically before it even runs.
+Traditionally configuration is an formed by aggregating a plethera of sources, untangled config believes that constraining you to one file and some defaults, leads to more a maintanable and debuggable system.
+
+[NOTE]
+====
+Config edn files can contain arbitrary *edn data* that will be read in as soon as your server starts up. +
+You can inject config into your parser environment by putting it in your `:parser-injections`.
+[source]
+----
+(make-untangled-server
+  :parser-injections #{:config})
+----
+See <<Building your own components>> for more detail on parser injections.
+====
+
+==== Default values
+Your application must have a `config/defaults.edn` available in your `:resource-paths`,
+and it must be a map containing safe default values for your application. +
+An example of a "safe" default is not auto migrating or dropping tables on startup.
+[source]
+----
+{:datomic
+  {:dbs
+    {:your-db
+      {:uri "..."
+       :auto-migrate false
+       :auto-drop    false}
+----
+
+==== Development
+Parameterizing your `:config-path` when calling `make-untangled-server` lets you use different config paths at development (or production) time.
+[source]
+.system.clj
+----
+(defn make-system [cfg-path]
+  (make-untangled-server
+    :config-path cfg-path))
+----
+[source]
+.user.clj
+----
+;;development
+(def config-paths
+  {:dev "config/dev.edn"
+   :secure "config/secure.edn"})
+(defn init [path]
+  (make-system (get config-paths path)))
+----
+[source]
+.core.clj
+----
+;;production
+(defn -main [& args]
+  (.start (make-system "/usr/local/etc/my_app.edn")))
+----
+
+==== Production
+In production builds however it is convenient to be able to point to switch between configs at run time. +
+So when running your server you can specify the path of the config file using the `-Dconfig=...` config system property.
+
+TIP: Options come before the jar +
+`java [-options] -jar jarfile [args...]`.
+
+==== Environmental Variables
+It is often convenient & useful to be able to reference environmental variables, so we provide a way to access env vars from your config file as follows:
+
+- `:env/PORT` => "8080"
+- `:env.edn/PORT` => 8080
+
+[WARNING]
+====
+Note the subtle distinction between the two.
+
+- `+++:env/*+++` will read the env var as a *string*.
+- `+++:env.edn/*+++` will read it as *edn* using `clojure.edn/read-string`.
+====
+
+==== Extending or replacing the config component
+If you find yourself wanting to replace the built-in configuration component & semantics, you can simply specify in the `:components` map of `make-untangled-server` a `:config` component.
+[WARNING]
+====
+The new config component must satisfy two criteria:
+
+- Must implement `component/Lifecycle`.
+- Should place the loaded configuration in itself under `:value`.
+====
+
+[source]
+.a naive but simple example
+----
+(defrecord MyConfig [value]
+  component/Lifecycle
+  (start [this]
+    (->> (System/getproperty "config")
+         io/resource
+         slurp
+         read-string
+         (hash-map :value)))
+  (stop [this] this))
+(make-untangled-server
+  :components {:config (->MyConfig)})
+----
 
 == Untangled Spec
 
