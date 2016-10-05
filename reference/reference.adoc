@@ -916,27 +916,7 @@ The new config component must satisfy two criteria:
 
 == Untangled Spec
 
-Untangled Spec is built on Clojure/Clojurescript test. The entire API of those libraries works within the body of the
-specification. Untangled spec adds in a few useful features:
-
-- A DSL that reads more like an outline of a runnable specification
-- Clojure and Clojurescript test runners that render the specification results as an outline
-- Easy mocking with script-like semantics, argument capture and verification, and async timeline simulation
-- Midje-like assertion blocks
-
-=== Specification Layout
-
-=== Assertions and arrows
-
-=== Mocking
-
-- Verify is automatic (use =2x=> to indicate an exact number of runs, where 2 can be any number)
-- Left hand side is capture, right hand side can have assertions
-
-Mention gotchas:
-
-- Cannot mock inline or macros
-- Mocking internals of Om can cause the browser-based spec renderer to fail. Recommend not doing it.
+include::https://raw.githubusercontent.com/untangled-web/untangled-spec/feature/documentation/docs/index.adoc[lines=18..-1, leveloffset=+1]
 
 == Untangled Datomic
 
