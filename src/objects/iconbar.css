@@ -87,7 +87,6 @@
 }
 
 .c-iconbar__label {
-  @mixin fade-out;
   display: inline-block;
   height: 0;
   transition-duration: var(--global-duration);
