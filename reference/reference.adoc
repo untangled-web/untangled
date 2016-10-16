@@ -11,8 +11,8 @@
 == Introduction
 
 This reference guide is meant to be an indexed document for quickly finding information about the Untangled Web
-Framework. If you're trying to learn Untangled, then you should do the
-https://github.com/untangled-web/untangled-tutorial[tutorial].
+Framework. If you're trying to learn Untangled, then you should read and do the exercises in the 
+https://github.com/untangled-web/untangled-devguide[developer's guide].
 
 == Untangled Client
 
